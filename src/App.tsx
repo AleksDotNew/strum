@@ -5,6 +5,8 @@ import { HintLine } from './ui/HintLine'
 import { SymbolBar } from './ui/SymbolBar'
 import { BottomNav, type Tab } from './ui/BottomNav'
 import { Editor, type EditorApi } from './editor/Editor'
+import { cursorContext, type CursorCtx } from './editor/cursorContext'
+import type { SymbolAction } from './ui/symbols'
 import { initEngine } from './engine/engine'
 
 export default function App() {
@@ -15,7 +17,13 @@ export default function App() {
   const [isError, setIsError] = createSignal(false)
   const [currentTab, setCurrentTab] = createSignal<Tab>('code')
   const [code, setCode] = createSignal('s("bd sd")')
+  const [cursorCtx, setCursorCtx] = createSignal<CursorCtx>('mini')
   let editorApi: EditorApi | undefined
+
+  const updateCursor = (pos: number) => {
+    const currentCode = editorApi ? editorApi.getCode() : code()
+    setCursorCtx(cursorContext(currentCode, pos))
+  }
 
   const togglePlay = async () => {
     if (playing()) {
@@ -77,6 +85,23 @@ export default function App() {
     }
   }
 
+  const handleSymbolAction = (act: SymbolAction) => {
+    if (!editorApi) return
+    if (act.insert === '\b') {
+      const pos = editorApi.cursor()
+      if (pos > 0) {
+        editorApi.view.dispatch({
+          changes: { from: pos - 1, to: pos },
+          selection: { anchor: pos - 1 },
+          scrollIntoView: true,
+        })
+      }
+    } else {
+      editorApi.insert(act.insert, act.cursorOffset)
+    }
+    updateCursor(editorApi.cursor())
+  }
+
   return (
     <main class="app">
       <TopBar
@@ -95,8 +120,13 @@ export default function App() {
             initialCode={code()}
             onReady={(api) => {
               editorApi = api
+              updateCursor(api.cursor())
             }}
-            onChange={setCode}
+            onChange={(newCode) => {
+              setCode(newCode)
+              if (editorApi) updateCursor(editorApi.cursor())
+            }}
+            onCursorMove={updateCursor}
           />
         )}
         {currentTab() === 'grid' && <div>Сетка (в разработке)</div>}
@@ -105,7 +135,7 @@ export default function App() {
       </section>
 
       <HintLine message={hint()} isError={isError()} />
-      <SymbolBar onInsert={(sym) => editorApi?.insert(sym)} />
+      <SymbolBar context={cursorCtx()} onAction={handleSymbolAction} />
       <BottomNav currentTab={currentTab()} onSelectTab={setCurrentTab} />
     </main>
   )

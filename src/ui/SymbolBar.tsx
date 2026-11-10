@@ -1,22 +1,27 @@
+import { symbolsFor, type SymbolAction } from './symbols'
+import type { CursorCtx } from '../editor/cursorContext'
+
 export interface SymbolBarProps {
-  onInsert(symbol: string): void
+  context: CursorCtx
+  onAction(action: SymbolAction): void
 }
 
-const DEFAULT_SYMBOLS = ['~', '*', '/', '[', ']', '<', '>', ',', '?', '!', '@', ':', '.', '|', '(', ')', '$:']
-
 export function SymbolBar(props: SymbolBarProps) {
+  const symbols = () => symbolsFor(props.context)
+
   return (
-    <div class="symbol-bar">
+    <div class="symbol-bar" data-testid="symbol-bar">
       <div class="symbol-row">
-        {DEFAULT_SYMBOLS.map((sym) => (
+        {symbols().map((sym) => (
           <button
             class="symbol-btn"
+            data-symbol={sym.label}
             onPointerDown={(e) => {
               e.preventDefault()
-              props.onInsert(sym)
+              props.onAction(sym)
             }}
           >
-            {sym}
+            {sym.label}
           </button>
         ))}
       </div>
