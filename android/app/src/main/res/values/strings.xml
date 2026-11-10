@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Strum</string>
+    <string name="title_activity_main">Strum</string>
+    <string name="package_name">dev.strum.app</string>
+    <string name="custom_url_scheme">dev.strum.app</string>
+</resources>

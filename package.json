@@ -1,0 +1,42 @@
+{
+  "name": "strum",
+  "private": true,
+  "version": "0.0.1",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "node scripts/patch-packages.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm run test && npm run build",
+    "android": "npm run build && cap sync android && cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/keyboard": "^8.0.6",
+    "@strudel/codemirror": "^1.3.0",
+    "@strudel/core": "^1.2.6",
+    "@strudel/draw": "^1.2.6",
+    "@strudel/mini": "^1.2.6",
+    "@strudel/soundfonts": "^1.3.0",
+    "@strudel/tonal": "^1.2.6",
+    "@strudel/transpiler": "^1.2.6",
+    "@strudel/webaudio": "^1.3.0",
+    "acorn": "^8.19.0",
+    "idb": "^8.0.4",
+    "solid-js": "^1.9.18"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "@playwright/test": "^1.65.0",
+    "jsdom": "^31.0.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7",
+    "vite-plugin-solid": "^2.11.15",
+    "vitest": "^5.1.0"
+  }
+}
