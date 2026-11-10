@@ -25,7 +25,7 @@ strudel.cc — это PWA, рассчитанная на большие экра
 
 | Слой | Технология |
 |---|---|
-| Оболочка | Capacitor 7 (Android), плагины: Filesystem, Share, App, StatusBar, Keyboard, `@capacitor-community/keep-awake` |
+| Оболочка | Capacitor 8 (Android), JDK 21, плагины: Filesystem, Share, App, StatusBar, Keyboard, `@capacitor-community/keep-awake` |
 | UI | Solid.js + Vite + TypeScript (strict) |
 | Редактор | CodeMirror 6 + `@strudel/codemirror` |
 | Движок | `@strudel/core`, `mini`, `transpiler`, `webaudio`, `tonal`, `soundfonts`, `draw` (версии фиксируются при Phase 0) |
