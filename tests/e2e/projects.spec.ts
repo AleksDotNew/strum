@@ -29,3 +29,4 @@ test('projects and version history workflows', async ({ page }) => {
   await page.getByRole('button', { name: 'Close Projects' }).tap()
   await expect(page.locator('.project-card')).not.toBeVisible()
 })
+

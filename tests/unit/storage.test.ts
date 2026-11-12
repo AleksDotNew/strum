@@ -65,3 +65,4 @@ describe('IndexedDB storage', () => {
     expect(versions[0].code).toBe('s("bd:54")')
   })
 })
+

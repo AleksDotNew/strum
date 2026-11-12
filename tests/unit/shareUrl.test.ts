@@ -26,3 +26,4 @@ describe('shareUrl', () => {
     expect(decodeStrudelUrl('invalid!!base64')).toBeNull()
   })
 })
+
