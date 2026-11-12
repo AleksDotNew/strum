@@ -22,6 +22,8 @@ import type { TemplateRecord, PrebakeScript } from './storage/db'
 import { PrebakeSheet } from './ui/PrebakeSheet'
 import { TemplatesSheet } from './ui/TemplatesSheet'
 import { resolveCursorHint } from './hints/tokenInspector'
+import { literalAt, replaceLiteral, type CodeLiteral } from './code-model/acorn'
+import { NumberSliderSheet } from './ui/NumberSliderSheet'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -33,6 +35,8 @@ export default function App() {
   const [showProjects, setShowProjects] = createSignal(false)
   const [showPrebakes, setShowPrebakes] = createSignal(false)
   const [showTemplates, setShowTemplates] = createSignal(false)
+  const [showNumberSlider, setShowNumberSlider] = createSignal(false)
+  const [activeLiteral, setActiveLiteral] = createSignal<CodeLiteral | null>(null)
   const [projectId, setProjectId] = createSignal('')
   const [projectName, setProjectName] = createSignal('Мой джем')
   const [prebakeIds, setPrebakeIds] = createSignal<string[]>([DEFAULT_PREBAKE_ID])
@@ -137,12 +141,38 @@ export default function App() {
   const updateCursor = (pos: number) => {
     const currentCode = editorApi ? editorApi.getCode() : code()
     setCursorCtx(cursorContext(currentCode, pos))
+
+    const lit = literalAt(currentCode, pos)
+    if (lit && lit.type === 'number') {
+      setActiveLiteral(lit)
+    } else if (!showNumberSlider()) {
+      setActiveLiteral(null)
+    }
+
     if (!isError()) {
       const tokenHint = resolveCursorHint(currentCode, pos)
       if (tokenHint) {
         setHint(tokenHint)
       } else {
         setHint(statusHint())
+      }
+    }
+  }
+
+  const handleSliderValueChange = async (newVal: number) => {
+    const lit = activeLiteral()
+    if (!lit) return
+    const currentCode = editorApi ? editorApi.getCode() : code()
+    const res = replaceLiteral(currentCode, lit, String(newVal))
+    if (res.ok) {
+      editorApi?.setCode(res.code)
+      setCode(res.code)
+      setActiveLiteral(res.updatedLiteral)
+      if (playing()) {
+        try {
+          const engine = await initEngine()
+          await engine.evaluate(res.code)
+        } catch {}
       }
     }
   }
@@ -355,8 +385,21 @@ export default function App() {
       </section>
 
       <HintLine message={hint()} isError={isError()} />
-      <SymbolBar context={cursorCtx()} onAction={handleSymbolAction} />
+      <SymbolBar
+        context={cursorCtx()}
+        activeLiteral={activeLiteral()}
+        onOpenSlider={() => setShowNumberSlider(true)}
+        onAction={handleSymbolAction}
+      />
       <BottomNav currentTab={currentTab()} onSelectTab={setCurrentTab} />
+
+      <Show when={showNumberSlider() && activeLiteral()}>
+        <NumberSliderSheet
+          literal={activeLiteral()!}
+          onValueChange={handleSliderValueChange}
+          onClose={() => setShowNumberSlider(false)}
+        />
+      </Show>
 
       <Show when={showTempoSheet()}>
         <div class="tempo-sheet-backdrop" onClick={() => setShowTempoSheet(false)}>
