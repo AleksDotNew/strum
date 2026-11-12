@@ -18,6 +18,7 @@ import { VersionHistorySheet } from './ui/VersionHistorySheet'
 import { ProjectsScreen } from './ui/ProjectsScreen'
 import { prebakeRepo, DEFAULT_PREBAKE_ID } from './storage/prebakeRepo'
 import { templateRepo } from './storage/templateRepo'
+import { samplepackRepo } from './storage/samplepackRepo'
 import type { TemplateRecord, PrebakeScript } from './storage/db'
 import { PrebakeSheet } from './ui/PrebakeSheet'
 import { TemplatesSheet } from './ui/TemplatesSheet'
@@ -105,6 +106,7 @@ export default function App() {
       }
 
       await prebakeRepo.ensureBuiltinDefault()
+      samplepackRepo.loadAllActivePacks().catch(() => {})
       const all = await projectRepo.getAll()
       if (all.length > 0) {
         setProjectId(all[0].id)

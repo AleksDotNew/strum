@@ -37,6 +37,19 @@ export interface TemplateRecord {
   createdAt: number
 }
 
+export interface SamplepackRecord {
+  id: string
+  name: string
+  by: string
+  about: string
+  filename?: string
+  isBuiltin: boolean
+  active: boolean
+  soundNames: string[]
+  data?: any // parsed .weftpack data if imported or cached
+  updatedAt: number
+}
+
 export interface StrumDB extends DBSchema {
   projects: {
     key: string
@@ -58,6 +71,11 @@ export interface StrumDB extends DBSchema {
     value: TemplateRecord
     indexes: { createdAt: number }
   }
+  samplepacks: {
+    key: string
+    value: SamplepackRecord
+    indexes: { updatedAt: number }
+  }
   settings: {
     key: string
     value: any
@@ -65,7 +83,7 @@ export interface StrumDB extends DBSchema {
 }
 
 export const DB_NAME = 'strum_db'
-export const DB_VERSION = 2
+export const DB_VERSION = 3
 
 let lastTimestamp = 0
 export function monotonicNow(): number {
@@ -103,6 +121,10 @@ export function initDb(): Promise<IDBPDatabase<StrumDB>> {
         if (!db.objectStoreNames.contains('templates')) {
           const templateStore = db.createObjectStore('templates', { keyPath: 'id' })
           templateStore.createIndex('createdAt', 'createdAt')
+        }
+        if (!db.objectStoreNames.contains('samplepacks')) {
+          const packStore = db.createObjectStore('samplepacks', { keyPath: 'id' })
+          packStore.createIndex('updatedAt', 'updatedAt')
         }
       },
     })

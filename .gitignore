@@ -10,4 +10,5 @@ android/build
 .gradle
 local.properties
 examples/
+release-artifacts/
 

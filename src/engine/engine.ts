@@ -21,6 +21,10 @@ export interface Engine {
   readonly started: boolean
 }
 
+export async function registerSampleMap(sampleMap: Record<string, string>, baseUrl = ''): Promise<void> {
+  await samples(sampleMap as any, baseUrl)
+}
+
 let instance: Promise<Engine> | null = null
 
 export function initEngine(): Promise<Engine> {

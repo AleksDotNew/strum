@@ -27,7 +27,12 @@ describe('templateRepo', () => {
     expect(fetched).toEqual(tpl)
 
     const all = await templateRepo.getAll()
-    expect(all).toHaveLength(1)
+    expect(all.length).toBeGreaterThanOrEqual(7)
+    expect(all.some((t) => t.id === tpl.id)).toBe(true)
+    expect(all.some((t) => t.id === 'builtin:tpl:meadow-echoes')).toBe(true)
+
+    const cannotDeleteBuiltin = await templateRepo.delete('builtin:tpl:meadow-echoes')
+    expect(cannotDeleteBuiltin).toBe(false)
 
     const deleted = await templateRepo.delete(tpl.id)
     expect(deleted).toBe(true)

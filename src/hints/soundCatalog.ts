@@ -89,22 +89,42 @@ export const SOUND_CATALOG: SoundEntry[] = [
   { name: 'z_noise', category: 'synth', description: 'ZzFX noise generator', isSynth: true },
 ]
 
+const dynamicSounds: SoundEntry[] = []
+
+export function registerDynamicSounds(sounds: SoundEntry[]): void {
+  for (const s of sounds) {
+    if (!dynamicSounds.some((existing) => existing.name === s.name) && !SOUND_CATALOG.some((c) => c.name === s.name)) {
+      dynamicSounds.push(s)
+    }
+  }
+}
+
+export function unregisterDynamicSounds(soundNames: string[]): void {
+  const set = new Set(soundNames)
+  for (let i = dynamicSounds.length - 1; i >= 0; i--) {
+    if (set.has(dynamicSounds[i].name)) {
+      dynamicSounds.splice(i, 1)
+    }
+  }
+}
+
 export function getAllSounds(): SoundEntry[] {
-  return SOUND_CATALOG
+  return [...SOUND_CATALOG, ...dynamicSounds]
 }
 
 export function getSynths(): SoundEntry[] {
-  return SOUND_CATALOG.filter((s) => s.isSynth === true)
+  return getAllSounds().filter((s) => s.isSynth === true)
 }
 
 export function isKnownSound(name: string): boolean {
-  return SOUND_CATALOG.some((s) => s.name === name)
+  return getAllSounds().some((s) => s.name === name)
 }
 
 export function searchSounds(query: string): SoundEntry[] {
   const q = query.trim().toLowerCase()
-  if (!q) return SOUND_CATALOG
-  return SOUND_CATALOG.filter(
+  const all = getAllSounds()
+  if (!q) return all
+  return all.filter(
     (s) =>
       s.name.toLowerCase().includes(q) ||
       s.category.toLowerCase().includes(q) ||

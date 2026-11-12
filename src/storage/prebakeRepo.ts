@@ -1,13 +1,42 @@
 import { initDb, monotonicNow, type PrebakeScript } from './db'
 
 export const DEFAULT_PREBAKE_ID = 'builtin:default'
+export const WEFT_HELPERS_PREBAKE_ID = 'builtin:weft-helpers'
 
 export const DEFAULT_PREBAKE_CODE = `// Default Strudel prebake
 samples('github:tidalcycles/dirt-samples')
 `
 
+export const WEFT_HELPERS_CODE = `// Weft Helpers (adapted from Weft Loom)
+// Time shifting:
+window.shiftBy = register('shiftBy', (amt, pat) => pat.late(amt))
+
+// Cycle degrade:
+window.cycleDegrade = register('cycleDegrade', pat => pat.mask("<[0|1]>"))
+window.cycleDegradeBy = register('cycleDegradeBy', (by, pat) => pat.mask(wchooseCycles(["1", 1 - by], ["0", by])))
+
+// Cycle counter visualizer:
+window.cycleCounter = () => note(time.seg("1").round()).postgain(0).dry(0).rsize(0).room(0)
+
+// TB-303 acid filter envelope helper:
+register('acidenv', (x, pat) => pat.lpf(100).lpenv(x * 9).lps(.2).lpd(.12).lpq(2))
+
+// DX FM synth helper:
+window.DX = (env = 8, fm = 2, harm = 2) => s("sine").fm(fm).fmenv(env).fmh(harm).fmdecay(.2)
+
+// Postgain multiplier:
+register('pg', (pgain, x) => x.mul(postgain(pgain)))
+
+// Orbits solo/mute helpers:
+window.soloedOrbits = []
+window.soloOrbit = (...orbits) => { window.soloedOrbits = orbits }
+window.mutedOrbits = []
+window.muteOrbit = (...orbits) => { window.mutedOrbits = orbits }
+`
+
 export const prebakeRepo = {
   async getAll(): Promise<PrebakeScript[]> {
+    await this.ensureBuiltinDefault()
     const db = await initDb()
     const all = await db.getAll('prebakes')
     return all.sort((a, b) => b.updatedAt - a.updatedAt)
@@ -21,18 +50,33 @@ export const prebakeRepo = {
   async ensureBuiltinDefault(): Promise<PrebakeScript> {
     const db = await initDb()
     const existing = await db.get('prebakes', DEFAULT_PREBAKE_ID)
-    if (existing) return existing
     const now = monotonicNow()
-    const builtin: PrebakeScript = {
-      id: DEFAULT_PREBAKE_ID,
-      name: 'Default dirt-samples',
-      source: 'builtin',
-      code: DEFAULT_PREBAKE_CODE,
-      trusted: true,
-      updatedAt: now,
+    let builtin = existing
+    if (!existing) {
+      builtin = {
+        id: DEFAULT_PREBAKE_ID,
+        name: 'Default dirt-samples',
+        source: 'builtin',
+        code: DEFAULT_PREBAKE_CODE,
+        trusted: true,
+        updatedAt: now,
+      }
+      await db.put('prebakes', builtin)
     }
-    await db.put('prebakes', builtin)
-    return builtin
+
+    const weftExisting = await db.get('prebakes', WEFT_HELPERS_PREBAKE_ID)
+    if (!weftExisting) {
+      await db.put('prebakes', {
+        id: WEFT_HELPERS_PREBAKE_ID,
+        name: 'Weft Helpers (shiftBy, cycleDegrade, DX, acidenv)',
+        source: 'builtin',
+        code: WEFT_HELPERS_CODE,
+        trusted: true,
+        updatedAt: now,
+      })
+    }
+
+    return builtin!
   },
 
   async create(data: {

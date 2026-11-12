@@ -1,0 +1,197 @@
+[
+  {
+    "id": "acid",
+    "name": "Acid Lines",
+    "by": "Weft Loom",
+    "about": "Acid at 132: squelching basses to play from the roll, a tight kit and a cowbell. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Acid Lines.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "acid_kick",
+      "acid_clap",
+      "acid_hat",
+      "acid_openhat",
+      "acid_cowbell",
+      "acid_squelch"
+    ]
+  },
+  {
+    "id": "chip",
+    "name": "Chip Arcade",
+    "by": "Weft Loom",
+    "about": "Chiptune at 150: drums made of noise and square waves, a coin, a laser and a jump, and square and triangle sounds for tunes. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Chip Arcade.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "chip_kick",
+      "chip_snare",
+      "chip_hat",
+      "chip_coin",
+      "chip_laser",
+      "chip_jump"
+    ]
+  },
+  {
+    "id": "minimal",
+    "name": "Minimal Click",
+    "by": "Weft Loom",
+    "about": "Minimal at 124: a tight kick, clicks and ticks, a rim, a wood block and a small sub blip. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Minimal Click.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "minimal_kick",
+      "minimal_click",
+      "minimal_tick",
+      "minimal_rim",
+      "minimal_wood",
+      "minimal_blip"
+    ]
+  },
+  {
+    "id": "deep",
+    "name": "Deep House",
+    "by": "Weft Loom",
+    "about": "Deep house at 122: a round kick, clap, hats and a shaker, and a minor ninth chord to stab or pad with. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Deep House.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "deep_kick",
+      "deep_clap",
+      "deep_hat",
+      "deep_openhat",
+      "deep_shaker",
+      "deep_chord"
+    ]
+  },
+  {
+    "id": "breaks",
+    "name": "Breakbeat Heat",
+    "by": "Weft Loom",
+    "about": "Breakbeat at 135: a break to cut into parts, a kick, snare, hats, ride and a crash, and a bass and a stab to go with them. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Breakbeat Heat.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "breaks_kick",
+      "breaks_snare",
+      "breaks_hat",
+      "breaks_ride",
+      "breaks_crash",
+      "breaks_break"
+    ]
+  },
+  {
+    "id": "garage",
+    "name": "Garage Swing",
+    "by": "Weft Loom",
+    "about": "UK garage at 132: a two-step kit that swings, a shaker, and an organ stab with a garage bass to play under it. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Garage Swing.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "garage_kick",
+      "garage_snare",
+      "garage_clap",
+      "garage_hat",
+      "garage_shaker",
+      "garage_organ"
+    ]
+  },
+  {
+    "id": "dub",
+    "name": "Dub Chords",
+    "by": "Weft Loom",
+    "about": "Dub techno at 120: a minor chord stab made to be echoed, a soft kick, rim, shaker and the hiss under it all. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Dub Chords.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "dub_kick",
+      "dub_rim",
+      "dub_shaker",
+      "dub_hat",
+      "dub_chord",
+      "dub_hiss"
+    ]
+  },
+  {
+    "id": "glitch",
+    "name": "Glitch Lab",
+    "by": "Weft Loom",
+    "about": "Glitch and IDM at 110: bursts of crushed noise and tone, clicks, a broken kick and snare, and a texture that stutters. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Glitch Lab.weftpack",
+    "soundCount": 7,
+    "sounds": [
+      "glitch_burst",
+      "glitch_burst2",
+      "glitch_burst3",
+      "glitch_click",
+      "glitch_kick",
+      "glitch_snare",
+      "glitch_stutter"
+    ]
+  },
+  {
+    "id": "electro",
+    "name": "Electro Funk",
+    "by": "Weft Loom",
+    "about": "Electro at 128: a short boomy kick, a snappy snare and clap, a cowbell, toms, and a robot bass to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Electro Funk.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "electro_kick",
+      "electro_snare",
+      "electro_clap",
+      "electro_hat",
+      "electro_cowbell",
+      "electro_tom"
+    ]
+  },
+  {
+    "id": "hands",
+    "name": "Hand Drums",
+    "by": "Weft Loom",
+    "about": "Hand percussion at 110: low and high congas, a bongo, a shaker, a clave and a cowbell, and a marimba and a kalimba to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Hand Drums.weftpack",
+    "soundCount": 6,
+    "sounds": [
+      "hands_conga",
+      "hands_congahi",
+      "hands_bongo",
+      "hands_shaker",
+      "hands_clave",
+      "hands_cowbell"
+    ]
+  },
+  {
+    "id": "disco",
+    "name": "Nu Disco",
+    "by": "Weft Loom",
+    "about": "Nu disco at 118: a kick, a clap, an open hat on the off beat, a tambourine, two string stabs and an octave bass to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Nu Disco.weftpack",
+    "soundCount": 7,
+    "sounds": [
+      "disco_kick",
+      "disco_clap",
+      "disco_hat",
+      "disco_openhat",
+      "disco_tambourine",
+      "disco_strings",
+      "disco_strings2"
+    ]
+  },
+  {
+    "id": "trap",
+    "name": "Trap Sub",
+    "by": "Weft Loom",
+    "about": "Trap at 140, felt at half the speed: a long 808, a punchy kick, snare and clap, hats to roll, and a dark bell. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Trap Sub.weftpack",
+    "soundCount": 7,
+    "sounds": [
+      "trap_boom",
+      "trap_kick",
+      "trap_snare",
+      "trap_clap",
+      "trap_hat",
+      "trap_openhat",
+      "trap_bell"
+    ]
+  }
+]

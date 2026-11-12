@@ -150,7 +150,22 @@ export function TemplatesSheet(props: TemplatesSheetProps) {
                 }}
               >
                 <div style={{ display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }}>
-                  <span style={{ 'font-weight': '600', color: 'var(--fg)', 'font-size': '15px' }}>{tpl.name}</span>
+                  <div style={{ display: 'flex', 'align-items': 'center', gap: '8px' }}>
+                    <span style={{ 'font-weight': '600', color: 'var(--fg)', 'font-size': '15px' }}>{tpl.name}</span>
+                    <Show when={tpl.id.startsWith('builtin:')}>
+                      <span
+                        style={{
+                          'font-size': '11px',
+                          padding: '2px 6px',
+                          background: '#1f293d',
+                          color: 'var(--accent)',
+                          'border-radius': '4px',
+                        }}
+                      >
+                        Встроенный
+                      </span>
+                    </Show>
+                  </div>
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <button
                       style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '4px' }}
@@ -159,13 +174,15 @@ export function TemplatesSheet(props: TemplatesSheetProps) {
                     >
                       💾
                     </button>
-                    <button
-                      style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', padding: '4px' }}
-                      title="Удалить"
-                      onClick={() => handleDelete(tpl.id)}
-                    >
-                      🗑
-                    </button>
+                    <Show when={!tpl.id.startsWith('builtin:')}>
+                      <button
+                        style={{ background: 'none', border: 'none', color: '#ff6b6b', cursor: 'pointer', padding: '4px' }}
+                        title="Удалить"
+                        onClick={() => handleDelete(tpl.id)}
+                      >
+                        🗑
+                      </button>
+                    </Show>
                   </div>
                 </div>
 
