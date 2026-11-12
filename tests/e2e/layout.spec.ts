@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('studio fits 412x915 without scroll and thumb controls are at bottom', async ({ page }) => {
   await page.goto('/')
+  await page.waitForLoadState('domcontentloaded')
   const doc = await page.evaluate(() => ({
     sw: document.documentElement.scrollWidth,
     sh: document.documentElement.scrollHeight,

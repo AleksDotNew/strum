@@ -1,4 +1,4 @@
-import { createSignal, onCleanup } from 'solid-js'
+import { createSignal, onCleanup, onMount } from 'solid-js'
 import './styles/app.css'
 import { TopBar } from './ui/TopBar'
 import { HintLine } from './ui/HintLine'
@@ -8,6 +8,7 @@ import { Editor, type EditorApi } from './editor/Editor'
 import { cursorContext, type CursorCtx } from './editor/cursorContext'
 import type { SymbolAction } from './ui/symbols'
 import { initEngine } from './engine/engine'
+import { installKeyboardInset } from './ui/keyboardInset'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -20,6 +21,14 @@ export default function App() {
   const [cursorCtx, setCursorCtx] = createSignal<CursorCtx>('mini')
   let editorApi: EditorApi | undefined
   let unsubscribeHighlight: (() => void) | undefined
+  let appRef: HTMLElement | undefined
+
+  onMount(() => {
+    if (appRef) {
+      const cleanup = installKeyboardInset(appRef)
+      onCleanup(cleanup)
+    }
+  })
 
   onCleanup(() => {
     unsubscribeHighlight?.()
@@ -124,7 +133,7 @@ export default function App() {
   }
 
   return (
-    <main class="app">
+    <main class="app" ref={appRef}>
       <TopBar
         playing={playing()}
         bpm={bpm()}
