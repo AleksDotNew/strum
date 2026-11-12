@@ -24,6 +24,7 @@ import { TemplatesSheet } from './ui/TemplatesSheet'
 import { resolveCursorHint } from './hints/tokenInspector'
 import { literalAt, replaceLiteral, type CodeLiteral } from './code-model/acorn'
 import { NumberSliderSheet } from './ui/NumberSliderSheet'
+import { StepGrid } from './ui/StepGrid'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -379,7 +380,21 @@ export default function App() {
             onCursorMove={updateCursor}
           />
         )}
-        {currentTab() === 'grid' && <div>Сетка (в разработке)</div>}
+        {currentTab() === 'grid' && (
+          <StepGrid
+            code={code()}
+            onUpdateCode={(newCode) => {
+              setCode(newCode)
+              editorApi?.setCode(newCode)
+              if (playing()) {
+                initEngine()
+                  .then((engine) => engine.evaluate(newCode))
+                  .catch(() => {})
+              }
+            }}
+            onSwitchToCode={() => setCurrentTab('code')}
+          />
+        )}
         {currentTab() === 'sounds' && <div>Браузер звуков (в разработке)</div>}
         {currentTab() === 'mix' && <div>Микшер (в разработке)</div>}
       </section>
