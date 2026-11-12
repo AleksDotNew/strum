@@ -112,5 +112,6 @@ export function strumAutocompleteExtension() {
   return autocompletion({
     override: [strumCompletionSource],
     defaultKeymap: true,
+    activateOnTypingDelay: 150,
   })
 }

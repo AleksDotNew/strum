@@ -74,12 +74,30 @@ const darkTheme = EditorView.theme(
       border: '1px solid #2a313d',
       color: '#e8e6e3',
       borderRadius: '6px',
+      zIndex: '50',
     },
     '.cm-tooltip-autocomplete': {
+      maxHeight: '120px',
+      maxWidth: '85vw',
+      overflowY: 'auto',
+      '& > ul': {
+        fontFamily: 'monospace',
+        fontSize: '13px',
+      },
+      '& > ul > li': {
+        padding: '2px 8px',
+      },
       '& > ul > li[aria-selected]': {
         backgroundColor: '#2b3442',
         color: '#7cf0b0',
       },
+    },
+    '.cm-completionInfo': {
+      maxHeight: '70px',
+      maxWidth: '260px',
+      overflowY: 'auto',
+      fontSize: '12px',
+      padding: '4px 8px',
     },
   },
   { dark: true }

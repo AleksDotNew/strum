@@ -9,4 +9,5 @@ android/app/build
 android/build
 .gradle
 local.properties
+examples/
 

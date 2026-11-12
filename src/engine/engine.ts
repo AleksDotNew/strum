@@ -1,6 +1,7 @@
 import { repl, evalScope } from '@strudel/core'
 import { transpiler } from '@strudel/transpiler'
-import { getAudioContext, webaudioOutput, registerSynthSounds, samples } from '@strudel/webaudio'
+import { getAudioContext, webaudioOutput, registerSynthSounds, registerZZFXSounds, samples } from '@strudel/webaudio'
+import { BUILTIN_SAMPLE_MAP } from './builtinSampleMap'
 import { Drawer } from '@strudel/draw'
 import { toEngineError, type EngineError } from './errors'
 import { runPrebake, type PrebakeReport } from '../prebake/runner'
@@ -40,7 +41,13 @@ async function create(): Promise<Engine> {
   )
 
   await registerSynthSounds()
-  await samples('github:tidalcycles/dirt-samples')
+  await registerZZFXSounds()
+  try {
+    await samples(BUILTIN_SAMPLE_MAP as any, '/samples/')
+  } catch (e) {
+    console.warn('Failed to register builtin samples:', e)
+  }
+  samples('github:tidalcycles/dirt-samples').catch(() => {})
 
   let lastError: unknown = null
   let lastMeta: any = null
