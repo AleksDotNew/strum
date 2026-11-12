@@ -7,6 +7,7 @@ import {
   type GridPatternCandidate,
 } from '../code-model/miniGrid'
 import { replaceLiteral } from '../code-model/acorn'
+import { PianoRoll } from './PianoRoll'
 
 export interface StepGridProps {
   code: string
@@ -17,6 +18,7 @@ export interface StepGridProps {
 const COMMON_DRUM_SOUNDS = ['bd', 'sd', 'hh', 'oh', 'cp', 'cr', 'rim', 'cb', 'tabla']
 
 export function StepGrid(props: StepGridProps) {
+  const [gridMode, setGridMode] = createSignal<'drums' | 'piano'>('drums')
   const candidates = createMemo(() => findGridPatternsInCode(props.code))
   const [selectedCandidateIndex, setSelectedCandidateIndex] = createSignal(0)
 
@@ -114,8 +116,63 @@ export function StepGrid(props: StepGridProps) {
         color: '#e8e6e3',
       }}
     >
+      {/* Mode switcher tabs: Drums vs Piano Roll */}
+      <div
+        style={{
+          display: 'flex',
+          'align-items': 'center',
+          gap: '8px',
+          padding: '6px 12px',
+          background: '#10141a',
+          'border-bottom': '1px solid #1f242e',
+        }}
+      >
+        <button
+          style={{
+            'min-height': '36px',
+            padding: '0 12px',
+            background: gridMode() === 'drums' ? 'var(--accent)' : '#191d24',
+            color: gridMode() === 'drums' ? '#000' : 'var(--text-muted)',
+            border: '1px solid #2a313d',
+            'border-radius': '6px',
+            'font-size': '13px',
+            'font-weight': '600',
+            cursor: 'pointer',
+          }}
+          onClick={() => setGridMode('drums')}
+        >
+          🥁 Ударные
+        </button>
+        <button
+          style={{
+            'min-height': '36px',
+            padding: '0 12px',
+            background: gridMode() === 'piano' ? 'var(--accent)' : '#191d24',
+            color: gridMode() === 'piano' ? '#000' : 'var(--text-muted)',
+            border: '1px solid #2a313d',
+            'border-radius': '6px',
+            'font-size': '13px',
+            'font-weight': '600',
+            cursor: 'pointer',
+          }}
+          onClick={() => setGridMode('piano')}
+        >
+          🎹 Пиано-ролл
+        </button>
+      </div>
+
       <Show
-        when={isSupported()}
+        when={gridMode() === 'drums'}
+        fallback={
+          <PianoRoll
+            code={props.code}
+            onUpdateCode={props.onUpdateCode}
+            onSwitchToCode={props.onSwitchToCode}
+          />
+        }
+      >
+        <Show
+          when={isSupported()}
         fallback={
           <div
             data-testid="grid-fallback"
@@ -318,6 +375,7 @@ export function StepGrid(props: StepGridProps) {
             </For>
           </div>
         </div>
+      </Show>
       </Show>
     </div>
   )
