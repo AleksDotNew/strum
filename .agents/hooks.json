@@ -3,7 +3,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "python3 ./.agents/scripts/session_start.py",
+        "command": "python3 scripts/session_start.py",
         "timeout": 10
       }
     ]
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ./.agents/scripts/pre_tool_guard.py",
+            "command": "python3 scripts/pre_tool_guard.py",
             "timeout": 10
           }
         ]

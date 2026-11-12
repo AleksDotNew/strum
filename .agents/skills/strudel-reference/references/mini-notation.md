@@ -21,3 +21,4 @@
 | Replicate | `"bd!3"` | Repeat step without speeding up | Yes (expands to 3 steps) |
 | Weight / Elongate | `"bd@2 sd"` | Give relative duration weight | No (`code-only` badge) |
 | Sample Variant | `"sd:2"` | Select sample index 2 from bank | Yes (preserved on step token) |
+

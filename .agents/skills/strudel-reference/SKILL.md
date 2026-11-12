@@ -46,3 +46,4 @@ When local `doc.json` is not yet installed in `node_modules` and `--allow-networ
 ## Common Mistakes
 - **Guessing Strudel export names**: Always inspect `node_modules/@strudel/*` or run `search` / `fn` before wiring REPL or audio functions.
 - **Treating single-quoted strings as mini-notation**: In Strudel transpiler, `"..."` and `` `...` `` are transpiled as mini-notation (`m(...)`), whereas `'...'` remains a plain JS string (e.g., `samples('github:...')`).
+

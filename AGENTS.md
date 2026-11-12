@@ -55,3 +55,4 @@ Invoke these workspace skills (located in `.agents/skills/`) whenever relevant:
 - Pin exact `@strudel/*` versions in `package.json` (`@strudel/core@1.2.6`, `@strudel/mini@1.2.6`, `@strudel/transpiler@1.2.6`, `@strudel/tonal@1.2.6`, `@strudel/draw@1.2.6`, `@strudel/webaudio@1.3.0`, `@strudel/soundfonts@1.3.0`, `@strudel/codemirror@1.3.0`).
 - Always initialize `AudioContext` inside a user gesture handler (`pointerdown` / `click`) and call `ctx.resume()` if `ctx.state === 'suspended'`.
 - Document any discovered export differences from `@strudel/*` packages here as phases progress.
+

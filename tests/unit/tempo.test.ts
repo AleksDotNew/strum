@@ -12,3 +12,4 @@ test('roundtrip', () => {
 test('custom beats per cycle', () => {
   expect(bpmToCps(120, 3)).toBeCloseTo(120 / 60 / 3)
 })
+

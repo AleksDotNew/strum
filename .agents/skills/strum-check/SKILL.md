@@ -38,3 +38,4 @@ python3 .agents/skills/strum-check/scripts/check.py single --test-file tests/uni
 ## Common Mistakes
 - **Claiming completion without running `suite`**: Always run `suite` and inspect the JSON report before committing.
 - **Omitting `--output` or `--e2e`**: Both flags are required on `suite` so nothing is silently skipped.
+

@@ -12,3 +12,4 @@ test('keyboard 320px', () => {
 test('ignores tiny diffs (url bar jitter)', () => {
   expect(computeInset(915, 900, 0)).toBe(0)
 })
+

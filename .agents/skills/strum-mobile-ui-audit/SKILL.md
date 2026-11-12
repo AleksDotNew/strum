@@ -38,3 +38,4 @@ python3 .agents/skills/strum-mobile-ui-audit/scripts/ui_audit.py layout-e2e --pr
 ## Common Mistakes
 - **Losing editor focus on SymbolBar tap**: Symbol buttons must call `e.preventDefault()` in `onPointerDown` so tapping a symbol does not blur CodeMirror or dismiss the Android IME.
 - **Using `100vh` without `--kb`**: Always size `.app` with `calc(100dvh - var(--kb))` so the SymbolBar rides directly above the software keyboard.
+

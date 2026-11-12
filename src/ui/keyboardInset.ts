@@ -33,3 +33,4 @@ export function installKeyboardInset(root: HTMLElement): () => void {
     vv.removeEventListener('resize', on)
   }
 }
+

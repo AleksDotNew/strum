@@ -34,3 +34,4 @@ describe('code-model invariants', () => {
     }
   })
 })
+

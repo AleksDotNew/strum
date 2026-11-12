@@ -44,3 +44,4 @@ python3 .agents/skills/strum-android/scripts/android_tool.py logcat --lines 200 
 ## Common Mistakes
 - **Wrong Java version**: Capacitor 8 / Android Gradle Plugin requires **JDK 21**. Always run `doctor` first if Gradle fails with class file version errors.
 - **Forgetting `cap sync android` after web changes**: Running Gradle alone packs stale assets from `android/app/src/main/assets/public`. Always use `sync-build`.
+

@@ -44,3 +44,4 @@ Requests to `raw.githubusercontent.com` use a cross-process file lock (`/tmp/str
 ## Common Mistakes
 - **Copying code from Weft Loom without attribution**: Both Strudel and Weft Loom are `AGPL-3.0-or-later`. Always keep vendored code in `src/vendor/weft/` with the generated header.
 - **Importing desktop-specific Tauri modules**: Strip or adapt `@tauri-apps/*` imports after vendoring and document the adaptation in the file header.
+

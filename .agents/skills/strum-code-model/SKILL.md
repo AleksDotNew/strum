@@ -47,3 +47,4 @@ Read the golden test template in [golden-test-template.ts](./references/golden-t
 ## Common Mistakes
 - **Formatting the whole AST with a code generator (`escodegen` / `prettier`)**: Never regenerate the whole file—user comments, formatting, and unrelated `$:` blocks get destroyed. Always slice and replace only `[from, to]`.
 - **Forgetting quotes when replacing mini-notation literals**: Decide explicitly whether `literal.range` includes or excludes the surrounding quotes (`"..."`) and keep that contract identical across `findLiterals`, `literalAt`, and `replaceLiteral`.
+

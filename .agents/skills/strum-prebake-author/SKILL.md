@@ -54,3 +54,4 @@ python3 .agents/skills/strum-prebake-author/scripts/prebake_tool.py inspect-temp
 ## Common Mistakes
 - **Auto-executing URL prebakes without trust**: Any script with `source: 'url' | 'file' | 'inline'` must start with `trusted: false` until the user previews the code and confirms; if a URL refresh changes `code`, `trusted` must reset to `false`.
 - **Blocking user code when one prebake fails**: `runPrebake` must catch per-script errors into `PrebakeReport` and continue executing remaining scripts and the user's pattern.
+
