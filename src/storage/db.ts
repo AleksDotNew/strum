@@ -17,6 +17,26 @@ export interface VersionRecord {
   createdAt: number
 }
 
+export type PrebakeSource = 'builtin' | 'file' | 'url' | 'inline'
+
+export interface PrebakeScript {
+  id: string
+  name: string
+  source: PrebakeSource
+  code: string
+  url?: string
+  trusted: boolean
+  updatedAt: number
+}
+
+export interface TemplateRecord {
+  id: string
+  name: string
+  prebakeIds: string[]
+  starterCode: string | null
+  createdAt: number
+}
+
 export interface StrumDB extends DBSchema {
   projects: {
     key: string
@@ -28,6 +48,16 @@ export interface StrumDB extends DBSchema {
     value: VersionRecord
     indexes: { projectId: string; createdAt: number }
   }
+  prebakes: {
+    key: string
+    value: PrebakeScript
+    indexes: { updatedAt: number }
+  }
+  templates: {
+    key: string
+    value: TemplateRecord
+    indexes: { createdAt: number }
+  }
   settings: {
     key: string
     value: any
@@ -35,7 +65,7 @@ export interface StrumDB extends DBSchema {
 }
 
 export const DB_NAME = 'strum_db'
-export const DB_VERSION = 1
+export const DB_VERSION = 2
 
 let lastTimestamp = 0
 export function monotonicNow(): number {
@@ -65,6 +95,14 @@ export function initDb(): Promise<IDBPDatabase<StrumDB>> {
         }
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings')
+        }
+        if (!db.objectStoreNames.contains('prebakes')) {
+          const prebakeStore = db.createObjectStore('prebakes', { keyPath: 'id' })
+          prebakeStore.createIndex('updatedAt', 'updatedAt')
+        }
+        if (!db.objectStoreNames.contains('templates')) {
+          const templateStore = db.createObjectStore('templates', { keyPath: 'id' })
+          templateStore.createIndex('createdAt', 'createdAt')
         }
       },
     })
