@@ -1,4 +1,4 @@
-import { createSignal, onMount, For, Show } from 'solid-js'
+import { createSignal, createEffect, onMount, For, Show } from 'solid-js'
 import { prebakeRepo, DEFAULT_PREBAKE_ID } from '../storage/prebakeRepo'
 import type { PrebakeScript } from '../storage/db'
 
@@ -18,6 +18,11 @@ export function PrebakeSheet(props: PrebakeSheetProps) {
   const [newSource, setNewSource] = createSignal<'inline' | 'url'>('inline')
   const [newCode, setNewCode] = createSignal('')
   const [newUrl, setNewUrl] = createSignal('')
+  const [activeIds, setActiveIds] = createSignal<string[]>([...props.currentPrebakeIds])
+
+  createEffect(() => {
+    setActiveIds([...props.currentPrebakeIds])
+  })
 
   const loadData = async () => {
     await prebakeRepo.ensureBuiltinDefault()
@@ -30,15 +35,18 @@ export function PrebakeSheet(props: PrebakeSheetProps) {
   })
 
   const toggleScriptInStack = (id: string) => {
-    const current = [...props.currentPrebakeIds]
+    const current = [...activeIds()]
     const idx = current.indexOf(id)
     if (idx >= 0) {
       current.splice(idx, 1)
     } else {
       current.push(id)
     }
+    setActiveIds(current)
     props.onUpdatePrebakeIds(current)
   }
+
+  const isScriptInStack = (id: string) => activeIds().includes(id)
 
   const handleTrust = async (script: PrebakeScript) => {
     await prebakeRepo.update(script.id, { trusted: true })
@@ -195,24 +203,25 @@ export function PrebakeSheet(props: PrebakeSheetProps) {
         <div style={{ 'overflow-y': 'auto', display: 'flex', 'flex-direction': 'column', gap: '8px', 'padding-bottom': '12px' }}>
           <For each={allPrebakes()}>
             {(pb) => {
-              const inStack = props.currentPrebakeIds.includes(pb.id)
+              const inStack = () => isScriptInStack(pb.id)
               return (
                 <div
                   class="prebake-item"
                   style={{
                     padding: '10px 12px',
-                    background: inStack ? '#1a241f' : '#1a1e27',
-                    border: inStack ? '1px solid var(--accent)' : '1px solid #2a313e',
+                    background: inStack() ? '#1a2920' : '#1a1e27',
+                    border: inStack() ? '1px solid var(--accent)' : '1px solid #2a313e',
                     'border-radius': '8px',
                     display: 'flex',
                     'align-items': 'center',
                     'justify-content': 'space-between',
                     gap: '8px',
+                    transition: 'background 0.15s ease, border-color 0.15s ease',
                   }}
                 >
                   <div style={{ 'min-width': '0', flex: '1' }}>
                     <div style={{ display: 'flex', 'align-items': 'center', gap: '6px' }}>
-                      <span style={{ 'font-weight': '600', color: inStack ? 'var(--accent)' : 'var(--fg)', 'font-size': '14px' }}>
+                      <span style={{ 'font-weight': '600', color: inStack() ? 'var(--accent)' : 'var(--fg)', 'font-size': '14px' }}>
                         {pb.name}
                       </span>
                       {pb.id === DEFAULT_PREBAKE_ID && (
@@ -262,17 +271,18 @@ export function PrebakeSheet(props: PrebakeSheetProps) {
                     <button
                       style={{
                         padding: '6px 12px',
-                        background: inStack ? '#2a313e' : '#2b3443',
-                        color: inStack ? 'var(--accent)' : 'var(--fg)',
-                        border: inStack ? '1px solid var(--accent)' : 'none',
+                        background: inStack() ? '#1f3d2b' : '#2b3443',
+                        color: inStack() ? 'var(--accent)' : 'var(--fg)',
+                        border: inStack() ? '1px solid var(--accent)' : 'none',
                         'border-radius': '6px',
                         cursor: 'pointer',
                         'font-size': '13px',
-                        'font-weight': '500',
+                        'font-weight': '600',
+                        transition: 'all 0.15s ease',
                       }}
                       onClick={() => toggleScriptInStack(pb.id)}
                     >
-                      {inStack ? 'В стеке ✓' : '+ В стек'}
+                      {inStack() ? 'В стеке ✓' : '+ В стек'}
                     </button>
                   </div>
                 </div>

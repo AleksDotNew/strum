@@ -43,7 +43,6 @@ export function SoundBrowser(props: SoundBrowserProps) {
   })
 
   const filteredSounds = createMemo<SoundEntry[]>(() => {
-    // soundListVersion forces re-evaluation when samplepacks are toggled
     soundListVersion()
     let list = query().trim() ? searchSounds(query()) : getAllSounds()
     const cat = selectedCategory()
@@ -101,6 +100,8 @@ export function SoundBrowser(props: SoundBrowserProps) {
         display: 'flex',
         'flex-direction': 'column',
         overflow: 'hidden',
+        height: '100%',
+        'min-height': '0',
         background: '#0e0f12',
         color: '#e8e6e3',
       }}
@@ -115,6 +116,7 @@ export function SoundBrowser(props: SoundBrowserProps) {
           gap: '8px',
           'align-items': 'center',
           'justify-content': 'space-between',
+          flex: '0 0 auto',
         }}
       >
         <div style={{ display: 'flex', gap: '6px' }}>
@@ -183,189 +185,211 @@ export function SoundBrowser(props: SoundBrowserProps) {
 
       {/* VIEW 1: SOUNDS LIST */}
       <Show when={browserTab() === 'sounds'}>
-        {/* Search Bar */}
-        <div
-          style={{
-            padding: '10px 12px',
-            background: '#14171d',
-            'border-bottom': '1px solid #1f242e',
-            display: 'flex',
-            'flex-direction': 'column',
-            gap: '8px',
-          }}
-        >
-          <input
-            type="search"
-            placeholder="Поиск звуков..."
-            value={query()}
-            onInput={(e) => {
-              setQuery(e.currentTarget.value)
-              if (e.currentTarget.value.trim() && selectedCategory() !== 'all') {
-                setSelectedCategory('all')
-              }
-            }}
-            style={{
-              height: '44px',
-              background: '#191d24',
-              border: '1px solid #2a313d',
-              'border-radius': '8px',
-              padding: '0 12px',
-              color: '#fff',
-              'font-size': '14px',
-              outline: 'none',
-            }}
-          />
-
-          {/* Category Pills (horizontally scrollable) */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '6px',
-              'overflow-x': 'auto',
-              'padding-bottom': '4px',
-            }}
-          >
-            <For each={CATEGORIES}>
-              {(cat) => (
-                <button
-                  data-testid={`filter-${cat.id}`}
-                  style={{
-                    'min-height': '32px',
-                    padding: '0 10px',
-                    background: selectedCategory() === cat.id ? 'var(--accent)' : '#191d24',
-                    color: selectedCategory() === cat.id ? '#000' : 'var(--text-muted)',
-                    border: '1px solid #2a313d',
-                    'border-radius': '16px',
-                    'font-size': '12px',
-                    'font-weight': selectedCategory() === cat.id ? '600' : 'normal',
-                    'white-space': 'nowrap',
-                    cursor: 'pointer',
-                    flex: '0 0 auto',
-                  }}
-                  onClick={() => setSelectedCategory(cat.id)}
-                >
-                  {cat.label}
-                </button>
-              )}
-            </For>
-          </div>
-        </div>
-
-        {/* Sounds List */}
         <div
           style={{
             flex: 1,
-            'overflow-y': 'auto',
-            padding: '8px 12px',
             display: 'flex',
             'flex-direction': 'column',
-            gap: '8px',
+            height: '100%',
+            'min-height': '0',
+            overflow: 'hidden',
           }}
         >
-          <Show
-            when={filteredSounds().length > 0}
-            fallback={
-              <div style={{ padding: '32px 16px', 'text-align': 'center', color: 'var(--text-muted)' }}>
-                Звуки не найдены
-              </div>
-            }
+          {/* Search Bar */}
+          <div
+            style={{
+              padding: '10px 12px',
+              background: '#14171d',
+              'border-bottom': '1px solid #1f242e',
+              display: 'flex',
+              'flex-direction': 'column',
+              gap: '8px',
+              flex: '0 0 auto',
+            }}
           >
-            <For each={filteredSounds()}>
-              {(sound) => (
-                <div
-                  data-testid={`sound-item-${sound.name}`}
-                  style={{
-                    display: 'flex',
-                    'align-items': 'center',
-                    'justify-content': 'space-between',
-                    padding: '8px 12px',
-                    background: '#13161c',
-                    border: '1px solid #222733',
-                    'border-radius': '8px',
-                    gap: '8px',
-                  }}
-                >
-                  <div style={{ flex: 1, display: 'flex', 'flex-direction': 'column', gap: '2px' }}>
-                    <div style={{ display: 'flex', 'align-items': 'center', gap: '8px' }}>
-                      <span
-                        style={{
-                          'font-weight': '700',
-                          'font-size': '14px',
-                          color: 'var(--accent)',
-                          'font-family': 'monospace',
-                        }}
-                      >
-                        {sound.name}
-                      </span>
-                      <span
-                        style={{
-                          'font-size': '10px',
-                          padding: '2px 5px',
-                          background: '#1e2430',
-                          color: 'var(--text-muted)',
-                          'border-radius': '4px',
-                        }}
-                      >
-                        {sound.category}
-                      </span>
-                    </div>
-                    <Show when={sound.description}>
-                      <span style={{ 'font-size': '11px', color: '#8892a0', 'line-height': '1.3' }}>
-                        {sound.description}
-                      </span>
-                    </Show>
-                  </div>
+            <input
+              type="search"
+              placeholder="Поиск звуков..."
+              value={query()}
+              onInput={(e) => {
+                setQuery(e.currentTarget.value)
+                if (e.currentTarget.value.trim() && selectedCategory() !== 'all') {
+                  setSelectedCategory('all')
+                }
+              }}
+              style={{
+                height: '44px',
+                background: '#191d24',
+                border: '1px solid #2a313d',
+                'border-radius': '8px',
+                padding: '0 12px',
+                color: '#fff',
+                'font-size': '14px',
+                outline: 'none',
+              }}
+            />
 
-                  {/* Actions: Audition & Insert */}
-                  <div style={{ display: 'flex', 'align-items': 'center', gap: '6px' }}>
-                    <button
-                      aria-label={`Audition ${sound.name}`}
-                      style={{
-                        'min-height': '40px',
-                        'min-width': '40px',
-                        padding: '0 8px',
-                        background: auditioning() === sound.name ? 'var(--accent)' : '#191d24',
-                        color: auditioning() === sound.name ? '#000' : 'var(--text)',
-                        border: '1px solid #2a313d',
-                        'border-radius': '6px',
-                        'font-size': '13px',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => handleAudition(sound.name)}
-                    >
-                      ▶
-                    </button>
+            {/* Category Pills (horizontally scrollable) */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '6px',
+                'overflow-x': 'auto',
+                '-webkit-overflow-scrolling': 'touch',
+                'padding-bottom': '4px',
+              }}
+            >
+              <For each={CATEGORIES}>
+                {(cat) => (
+                  <button
+                    data-testid={`filter-${cat.id}`}
+                    style={{
+                      'min-height': '32px',
+                      padding: '0 10px',
+                      background: selectedCategory() === cat.id ? 'var(--accent)' : '#191d24',
+                      color: selectedCategory() === cat.id ? '#000' : 'var(--text-muted)',
+                      border: '1px solid #2a313d',
+                      'border-radius': '16px',
+                      'font-size': '12px',
+                      'font-weight': selectedCategory() === cat.id ? '600' : 'normal',
+                      'white-space': 'nowrap',
+                      cursor: 'pointer',
+                      flex: '0 0 auto',
+                    }}
+                    onClick={() => setSelectedCategory(cat.id)}
+                  >
+                    {cat.label}
+                  </button>
+                )}
+              </For>
+            </div>
+          </div>
 
-                    <button
-                      style={{
-                        'min-height': '40px',
-                        padding: '0 10px',
-                        background: '#232936',
-                        color: 'var(--accent)',
-                        border: '1px solid #363e50',
-                        'border-radius': '6px',
-                        'font-size': '12px',
-                        'font-weight': '600',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => props.onInsertSound(sound.name)}
-                    >
-                      + Вставить
-                    </button>
-                  </div>
+          {/* Sounds Scrollable List */}
+          <div
+            data-testid="sounds-scroll-list"
+            style={{
+              flex: 1,
+              'overflow-y': 'auto',
+              '-webkit-overflow-scrolling': 'touch',
+              'min-height': '0',
+              height: '100%',
+              padding: '8px 12px',
+              display: 'flex',
+              'flex-direction': 'column',
+              gap: '8px',
+            }}
+          >
+            <Show
+              when={filteredSounds().length > 0}
+              fallback={
+                <div style={{ padding: '32px 16px', 'text-align': 'center', color: 'var(--text-muted)' }}>
+                  Звуки не найдены
                 </div>
-              )}
-            </For>
-          </Show>
+              }
+            >
+              <For each={filteredSounds()}>
+                {(sound) => (
+                  <div
+                    data-testid={`sound-item-${sound.name}`}
+                    style={{
+                      display: 'flex',
+                      'align-items': 'center',
+                      'justify-content': 'space-between',
+                      padding: '8px 12px',
+                      background: '#13161c',
+                      border: '1px solid #222733',
+                      'border-radius': '8px',
+                      gap: '8px',
+                      flex: '0 0 auto',
+                    }}
+                  >
+                    <div style={{ flex: 1, display: 'flex', 'flex-direction': 'column', gap: '2px' }}>
+                      <div style={{ display: 'flex', 'align-items': 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            'font-weight': '700',
+                            'font-size': '14px',
+                            color: 'var(--accent)',
+                            'font-family': 'monospace',
+                          }}
+                        >
+                          {sound.name}
+                        </span>
+                        <span
+                          style={{
+                            'font-size': '10px',
+                            padding: '2px 5px',
+                            background: '#1e2430',
+                            color: 'var(--text-muted)',
+                            'border-radius': '4px',
+                          }}
+                        >
+                          {sound.category}
+                        </span>
+                      </div>
+                      <Show when={sound.description}>
+                        <span style={{ 'font-size': '11px', color: '#8892a0', 'line-height': '1.3' }}>
+                          {sound.description}
+                        </span>
+                      </Show>
+                    </div>
+
+                    {/* Actions: Audition & Insert */}
+                    <div style={{ display: 'flex', 'align-items': 'center', gap: '6px' }}>
+                      <button
+                        aria-label={`Audition ${sound.name}`}
+                        style={{
+                          'min-height': '40px',
+                          'min-width': '40px',
+                          padding: '0 8px',
+                          background: auditioning() === sound.name ? 'var(--accent)' : '#191d24',
+                          color: auditioning() === sound.name ? '#000' : 'var(--text)',
+                          border: '1px solid #2a313d',
+                          'border-radius': '6px',
+                          'font-size': '13px',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => handleAudition(sound.name)}
+                      >
+                        ▶
+                      </button>
+
+                      <button
+                        style={{
+                          'min-height': '40px',
+                          padding: '0 10px',
+                          background: '#232936',
+                          color: 'var(--accent)',
+                          border: '1px solid #363e50',
+                          'border-radius': '6px',
+                          'font-size': '12px',
+                          'font-weight': '600',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => props.onInsertSound(sound.name)}
+                      >
+                        + Вставить
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </For>
+            </Show>
+          </div>
         </div>
       </Show>
 
       {/* VIEW 2: SAMPLEPACKS LIST */}
       <Show when={browserTab() === 'packs'}>
         <div
+          data-testid="samplepacks-scroll-list"
           style={{
             flex: 1,
             'overflow-y': 'auto',
+            '-webkit-overflow-scrolling': 'touch',
+            'min-height': '0',
+            height: '100%',
             padding: '12px',
             display: 'flex',
             'flex-direction': 'column',
@@ -389,6 +413,7 @@ export function SoundBrowser(props: SoundBrowserProps) {
                   display: 'flex',
                   'flex-direction': 'column',
                   gap: '8px',
+                  flex: '0 0 auto',
                 }}
               >
                 {/* Pack Header */}
