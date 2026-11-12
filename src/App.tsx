@@ -21,6 +21,7 @@ import { templateRepo } from './storage/templateRepo'
 import type { TemplateRecord, PrebakeScript } from './storage/db'
 import { PrebakeSheet } from './ui/PrebakeSheet'
 import { TemplatesSheet } from './ui/TemplatesSheet'
+import { resolveCursorHint } from './hints/tokenInspector'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -35,6 +36,7 @@ export default function App() {
   const [projectId, setProjectId] = createSignal('')
   const [projectName, setProjectName] = createSignal('Мой джем')
   const [prebakeIds, setPrebakeIds] = createSignal<string[]>([DEFAULT_PREBAKE_ID])
+  const [statusHint, setStatusHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [hint, setHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [isError, setIsError] = createSignal(false)
   const [currentTab, setCurrentTab] = createSignal<Tab>('code')
@@ -124,9 +126,25 @@ export default function App() {
     unsubscribeHighlight?.()
   })
 
+  const setAppHint = (msg: string, error = false) => {
+    setIsError(error)
+    if (!error) {
+      setStatusHint(msg)
+    }
+    setHint(msg)
+  }
+
   const updateCursor = (pos: number) => {
     const currentCode = editorApi ? editorApi.getCode() : code()
     setCursorCtx(cursorContext(currentCode, pos))
+    if (!isError()) {
+      const tokenHint = resolveCursorHint(currentCode, pos)
+      if (tokenHint) {
+        setHint(tokenHint)
+      } else {
+        setHint(statusHint())
+      }
+    }
   }
 
   const togglePlay = async () => {
@@ -135,11 +153,11 @@ export default function App() {
       engine.stop()
       setPlaying(false)
       setStatus('stopped')
-      setHint('Воспроизведение остановлено')
+      setAppHint('Воспроизведение остановлено')
       editorApi?.markError(null)
     } else {
       setStatus('loading')
-      setHint('Запуск аудиодвижка...')
+      setAppHint('Запуск аудиодвижка...')
       try {
         const engine = await initEngine()
         if (!unsubscribeHighlight) {
@@ -152,8 +170,7 @@ export default function App() {
         if (res.ok) {
           setPlaying(true)
           setStatus('playing')
-          setIsError(false)
-          setHint('Воспроизведение: ' + currentCode)
+          setAppHint('Воспроизведение: ' + currentCode)
           editorApi?.markError(null)
           if (res.meta?.miniLocations) {
             editorApi?.setMiniLocations(res.meta.miniLocations)
@@ -161,14 +178,12 @@ export default function App() {
           saveSnapshotIfChanged(projectId(), currentCode)
         } else {
           setStatus('error')
-          setIsError(true)
-          setHint(res.error.message)
+          setAppHint(res.error.message, true)
           editorApi?.markError(res.error.line)
         }
       } catch (e: any) {
         setStatus('error')
-        setIsError(true)
-        setHint(String(e))
+        setAppHint(String(e), true)
       }
     }
   }
@@ -187,8 +202,7 @@ export default function App() {
       if (res.ok) {
         setPlaying(true)
         setStatus('playing')
-        setIsError(false)
-        setHint('Код обновлён')
+        setAppHint('Код обновлён')
         editorApi?.markError(null)
         if (res.meta?.miniLocations) {
           editorApi?.setMiniLocations(res.meta.miniLocations)
@@ -196,14 +210,12 @@ export default function App() {
         saveSnapshotIfChanged(projectId(), currentCode)
       } else {
         setStatus('error')
-        setIsError(true)
-        setHint(res.error.message)
+        setAppHint(res.error.message, true)
         editorApi?.markError(res.error.line)
       }
     } catch (e: any) {
       setStatus('error')
-      setIsError(true)
-      setHint(String(e))
+      setAppHint(String(e), true)
     }
   }
 

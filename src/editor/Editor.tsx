@@ -6,6 +6,7 @@ import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { bracketMatching, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { keymap, lineNumbers, highlightActiveLine, Decoration, type DecorationSet } from '@codemirror/view'
 import { highlightExtension, highlightMiniLocations, updateMiniLocations } from '@strudel/codemirror'
+import { strumAutocompleteExtension } from './autocomplete'
 
 export const setErrorLine = StateEffect.define<number | null>()
 
@@ -68,6 +69,18 @@ const darkTheme = EditorView.theme(
       backgroundColor: 'rgba(255, 107, 107, 0.25)',
       borderLeft: '3px solid #ff6b6b',
     },
+    '.cm-tooltip': {
+      backgroundColor: '#191d24',
+      border: '1px solid #2a313d',
+      color: '#e8e6e3',
+      borderRadius: '6px',
+    },
+    '.cm-tooltip-autocomplete': {
+      '& > ul > li[aria-selected]': {
+        backgroundColor: '#2b3442',
+        color: '#7cf0b0',
+      },
+    },
   },
   { dark: true }
 )
@@ -117,6 +130,7 @@ export function Editor(props: EditorProps) {
         keymap.of([...defaultKeymap, ...historyKeymap]),
         updateListener,
         highlightExtension,
+        strumAutocompleteExtension(),
         errorLineField,
         darkTheme,
       ],
