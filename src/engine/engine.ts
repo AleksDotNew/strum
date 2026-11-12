@@ -3,8 +3,10 @@ import { transpiler } from '@strudel/transpiler'
 import { getAudioContext, webaudioOutput, registerSynthSounds, samples } from '@strudel/webaudio'
 import { Drawer } from '@strudel/draw'
 import { toEngineError, type EngineError } from './errors'
+import { runPrebake, type PrebakeReport } from '../prebake/runner'
+import type { PrebakeScript } from '../storage/db'
 
-export type { EngineError }
+export type { EngineError, PrebakeReport }
 export type EvalResult = { ok: true; meta?: any } | { ok: false; error: EngineError }
 
 export type HighlightCallback = (haps: any[], time: number) => void
@@ -14,6 +16,7 @@ export interface Engine {
   stop(): void
   setCps(cps: number): void
   onHighlight(cb: HighlightCallback): () => void
+  runPrebakeStack(prebakes: PrebakeScript[]): Promise<PrebakeReport>
   readonly started: boolean
 }
 
@@ -98,6 +101,11 @@ async function create(): Promise<Engine> {
       return () => {
         highlightListeners.delete(cb)
       }
+    },
+    async runPrebakeStack(prebakes: PrebakeScript[]) {
+      return runPrebake(prebakes, async (code: string) => {
+        await r.evaluate(code)
+      })
     },
   }
 }
