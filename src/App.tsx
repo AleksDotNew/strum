@@ -25,6 +25,7 @@ import { resolveCursorHint } from './hints/tokenInspector'
 import { literalAt, replaceLiteral, type CodeLiteral } from './code-model/acorn'
 import { NumberSliderSheet } from './ui/NumberSliderSheet'
 import { StepGrid } from './ui/StepGrid'
+import { SoundBrowser } from './ui/SoundBrowser'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -352,6 +353,38 @@ export default function App() {
     updateCursor(editorApi.cursor())
   }
 
+  const handleInsertSoundFromBrowser = (soundName: string) => {
+    if (editorApi) {
+      const pos = editorApi.cursor()
+      const currentCode = editorApi.getCode()
+      const ctx = cursorContext(currentCode, pos)
+      if (ctx === 'mini') {
+        editorApi.insert(soundName)
+      } else {
+        editorApi.insert(`s("${soundName}")`)
+      }
+      setCode(editorApi.getCode())
+    } else {
+      setCode(`s("${soundName}")`)
+    }
+    setCurrentTab('code')
+    setAppHint(`Звук "${soundName}" добавлен в код`)
+  }
+
+  const handleAuditionSound = async (soundName: string) => {
+    try {
+      const engine = await initEngine()
+      await engine.evaluate(`s("${soundName}").fast(2).gain(0.8)`)
+      setTimeout(() => {
+        if (playing()) {
+          engine.evaluate(code())
+        } else {
+          engine.stop()
+        }
+      }, 800)
+    } catch {}
+  }
+
   return (
     <main class="app" ref={appRef}>
       <TopBar
@@ -395,7 +428,12 @@ export default function App() {
             onSwitchToCode={() => setCurrentTab('code')}
           />
         )}
-        {currentTab() === 'sounds' && <div>Браузер звуков (в разработке)</div>}
+        {currentTab() === 'sounds' && (
+          <SoundBrowser
+            onInsertSound={handleInsertSoundFromBrowser}
+            onAudition={handleAuditionSound}
+          />
+        )}
         {currentTab() === 'mix' && <div>Микшер (в разработке)</div>}
       </section>
 
