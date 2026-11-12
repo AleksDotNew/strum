@@ -26,6 +26,7 @@ import { literalAt, replaceLiteral, type CodeLiteral } from './code-model/acorn'
 import { NumberSliderSheet } from './ui/NumberSliderSheet'
 import { StepGrid } from './ui/StepGrid'
 import { SoundBrowser } from './ui/SoundBrowser'
+import { MixerScreen } from './ui/MixerScreen'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -434,7 +435,21 @@ export default function App() {
             onAudition={handleAuditionSound}
           />
         )}
-        {currentTab() === 'mix' && <div>Микшер (в разработке)</div>}
+        {currentTab() === 'mix' && (
+          <MixerScreen
+            code={code()}
+            onUpdateCode={(newCode) => {
+              setCode(newCode)
+              editorApi?.setCode(newCode)
+              if (playing()) {
+                initEngine()
+                  .then((engine) => engine.evaluate(newCode))
+                  .catch(() => {})
+              }
+            }}
+            onSwitchToCode={() => setCurrentTab('code')}
+          />
+        )}
       </section>
 
       <HintLine message={hint()} isError={isError()} />
