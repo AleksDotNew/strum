@@ -16,6 +16,11 @@ import type { ProjectRecord } from './storage/db'
 import { encodeStrudelUrl, decodeStrudelUrl, exportJsFile } from './storage/shareUrl'
 import { VersionHistorySheet } from './ui/VersionHistorySheet'
 import { ProjectsScreen } from './ui/ProjectsScreen'
+import { prebakeRepo, DEFAULT_PREBAKE_ID } from './storage/prebakeRepo'
+import { templateRepo } from './storage/templateRepo'
+import type { TemplateRecord, PrebakeScript } from './storage/db'
+import { PrebakeSheet } from './ui/PrebakeSheet'
+import { TemplatesSheet } from './ui/TemplatesSheet'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -25,8 +30,11 @@ export default function App() {
   const [showMenu, setShowMenu] = createSignal(false)
   const [showHistory, setShowHistory] = createSignal(false)
   const [showProjects, setShowProjects] = createSignal(false)
+  const [showPrebakes, setShowPrebakes] = createSignal(false)
+  const [showTemplates, setShowTemplates] = createSignal(false)
   const [projectId, setProjectId] = createSignal('')
   const [projectName, setProjectName] = createSignal('Мой джем')
+  const [prebakeIds, setPrebakeIds] = createSignal<string[]>([DEFAULT_PREBAKE_ID])
   const [hint, setHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [isError, setIsError] = createSignal(false)
   const [currentTab, setCurrentTab] = createSignal<Tab>('code')
@@ -35,6 +43,21 @@ export default function App() {
   let editorApi: EditorApi | undefined
   let unsubscribeHighlight: (() => void) | undefined
   let appRef: HTMLElement | undefined
+
+  const runCurrentPrebakes = async (ids: string[]) => {
+    try {
+      const scripts: PrebakeScript[] = []
+      for (const id of ids) {
+        const s = await prebakeRepo.get(id)
+        if (s) scripts.push(s)
+      }
+      const engine = await initEngine()
+      const report = await engine.runPrebakeStack(scripts)
+      if (report.hasErrors) {
+        setHint('Предупреждение: ошибка в одном из prebake-скриптов')
+      }
+    } catch {}
+  }
 
   const saveSnapshotIfChanged = async (pId: string, currentCode: string) => {
     if (!pId) return
@@ -72,20 +95,27 @@ export default function App() {
         }
       }
 
+      await prebakeRepo.ensureBuiltinDefault()
       const all = await projectRepo.getAll()
       if (all.length > 0) {
         setProjectId(all[0].id)
         setProjectName(all[0].name)
+        const pbs = all[0].prebakeIds?.length ? all[0].prebakeIds : [DEFAULT_PREBAKE_ID]
+        setPrebakeIds(pbs)
         setCode(all[0].code)
         editorApi?.setCode(all[0].code)
+        runCurrentPrebakes(pbs)
       } else {
         const created = await projectRepo.create({
           name: 'Мой первый джем',
           code: code(),
+          prebakeIds: [DEFAULT_PREBAKE_ID],
         })
         await versionRepo.snapshot(created.id, created.code, 'Начало')
         setProjectId(created.id)
         setProjectName(created.name)
+        setPrebakeIds([DEFAULT_PREBAKE_ID])
+        runCurrentPrebakes([DEFAULT_PREBAKE_ID])
       }
     } catch {}
   })
@@ -197,13 +227,46 @@ export default function App() {
     } catch {}
   }
 
-  const handleSelectProject = (p: ProjectRecord) => {
+  const handleSelectProject = async (p: ProjectRecord) => {
     setProjectId(p.id)
     setProjectName(p.name)
+    const pbs = p.prebakeIds && p.prebakeIds.length > 0 ? p.prebakeIds : [DEFAULT_PREBAKE_ID]
+    setPrebakeIds(pbs)
     setCode(p.code)
     editorApi?.setCode(p.code)
     setHint(`Открыт: ${p.name}`)
+    await runCurrentPrebakes(pbs)
     handleEval()
+  }
+
+  const handleUpdatePrebakeIds = async (newIds: string[]) => {
+    setPrebakeIds(newIds)
+    if (projectId()) {
+      await projectRepo.update(projectId(), { prebakeIds: newIds })
+    }
+    await runCurrentPrebakes(newIds)
+    setHint('Стек скриптов обновлён')
+  }
+
+  const handleSaveAsTemplate = async () => {
+    const name = prompt('Название нового шаблона:', projectName())
+    if (!name) return
+    await templateRepo.create({
+      name,
+      prebakeIds: prebakeIds(),
+      starterCode: editorApi ? editorApi.getCode() : code(),
+    })
+    setHint(`Шаблон "${name}" сохранён`)
+  }
+
+  const handleApplyTemplate = async (tpl: TemplateRecord) => {
+    const newProj = await projectRepo.create({
+      name: `Проект (${tpl.name})`,
+      code: tpl.starterCode || 's("bd sd")',
+      prebakeIds: tpl.prebakeIds,
+    })
+    await versionRepo.snapshot(newProj.id, newProj.code, 'Из шаблона')
+    await handleSelectProject(newProj)
   }
 
   const handleRestoreVersion = (restoredCode: string) => {
@@ -339,6 +402,24 @@ export default function App() {
                 class="menu-action-btn"
                 onClick={() => {
                   setShowMenu(false)
+                  setShowPrebakes(true)
+                }}
+              >
+                ⚙️ Стек Prebake
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
+                  setShowTemplates(true)
+                }}
+              >
+                📑 Шаблоны проектов
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
                   handleExport()
                 }}
               >
@@ -372,6 +453,23 @@ export default function App() {
           currentProjectId={projectId()}
           onSelectProject={handleSelectProject}
           onClose={() => setShowProjects(false)}
+        />
+      </Show>
+
+      <Show when={showPrebakes()}>
+        <PrebakeSheet
+          projectId={projectId()}
+          currentPrebakeIds={prebakeIds()}
+          onUpdatePrebakeIds={handleUpdatePrebakeIds}
+          onSaveAsTemplate={handleSaveAsTemplate}
+          onClose={() => setShowPrebakes(false)}
+        />
+      </Show>
+
+      <Show when={showTemplates()}>
+        <TemplatesSheet
+          onApplyTemplate={handleApplyTemplate}
+          onClose={() => setShowTemplates(false)}
         />
       </Show>
     </main>
