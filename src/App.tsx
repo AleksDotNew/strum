@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from 'solid-js'
+import { createSignal, onCleanup, onMount, Show } from 'solid-js'
 import './styles/app.css'
 import { TopBar } from './ui/TopBar'
 import { HintLine } from './ui/HintLine'
@@ -9,11 +9,13 @@ import { cursorContext, type CursorCtx } from './editor/cursorContext'
 import type { SymbolAction } from './ui/symbols'
 import { initEngine } from './engine/engine'
 import { installKeyboardInset } from './ui/keyboardInset'
+import { bpmToCps } from './ui/tempo'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
   const [status, setStatus] = createSignal('idle')
   const [bpm, setBpm] = createSignal(120)
+  const [showTempoSheet, setShowTempoSheet] = createSignal(false)
   const [hint, setHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [isError, setIsError] = createSignal(false)
   const [currentTab, setCurrentTab] = createSignal<Tab>('code')
@@ -115,6 +117,26 @@ export default function App() {
     }
   }
 
+  const handleSetBpm = async (newBpm: number) => {
+    setBpm(newBpm)
+    try {
+      const engine = await initEngine()
+      engine.setCps(bpmToCps(newBpm))
+      setHint(`Темп: ${newBpm} BPM`)
+    } catch {}
+  }
+
+  const handleHush = async () => {
+    try {
+      const engine = await initEngine()
+      engine.stop()
+      setPlaying(false)
+      setStatus('idle')
+      setHint('Тишина (hush)')
+      editorApi?.markError(null)
+    } catch {}
+  }
+
   const handleSymbolAction = (act: SymbolAction) => {
     if (!editorApi) return
     if (act.insert === '\b') {
@@ -140,8 +162,9 @@ export default function App() {
         status={status()}
         onTogglePlay={togglePlay}
         onEval={handleEval}
-        onBpmClick={() => {}}
+        onBpmClick={() => setShowTempoSheet(true)}
         onMenuClick={() => {}}
+        onHush={handleHush}
       />
 
       <section style={{ height: '100%', 'min-height': '0', overflow: 'hidden' }}>
@@ -167,6 +190,32 @@ export default function App() {
       <HintLine message={hint()} isError={isError()} />
       <SymbolBar context={cursorCtx()} onAction={handleSymbolAction} />
       <BottomNav currentTab={currentTab()} onSelectTab={setCurrentTab} />
+
+      <Show when={showTempoSheet()}>
+        <div class="tempo-sheet-backdrop" onClick={() => setShowTempoSheet(false)}>
+          <div class="tempo-sheet" onClick={(e) => e.stopPropagation()}>
+            <div class="tempo-sheet-header">
+              <span>Темп: {bpm()} BPM</span>
+              <button aria-label="Close" onClick={() => setShowTempoSheet(false)}>✕</button>
+            </div>
+            <input
+              type="range"
+              class="tempo-slider"
+              min="40"
+              max="240"
+              value={bpm()}
+              onInput={(e) => handleSetBpm(Number(e.currentTarget.value))}
+            />
+            <div class="tempo-presets">
+              <button onClick={() => handleSetBpm(60)}>60</button>
+              <button onClick={() => handleSetBpm(90)}>90</button>
+              <button onClick={() => handleSetBpm(120)}>120</button>
+              <button onClick={() => handleSetBpm(140)}>140</button>
+              <button onClick={() => handleSetBpm(175)}>175</button>
+            </div>
+          </div>
+        </div>
+      </Show>
     </main>
   )
 }
