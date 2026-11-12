@@ -24,6 +24,13 @@ html, body, #root {
   display: grid;
   height: calc(100dvh - var(--kb));
   grid-template-rows: 48px minmax(0, 1fr) auto auto 56px;
+  grid-template-columns: 100%;
+  grid-template-areas:
+    "topbar"
+    "content"
+    "hint"
+    "symbol"
+    "bottomnav";
   padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
   padding-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
   padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
@@ -33,15 +40,63 @@ html, body, #root {
 
 .app.kb-open {
   grid-template-rows: 48px minmax(0, 1fr) auto auto 0;
+  grid-template-areas:
+    "topbar"
+    "content"
+    "hint"
+    "symbol"
+    "bottomnav";
 }
 
 .topbar {
+  grid-area: topbar;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   border-bottom: 1px solid #1f232b;
   min-height: 48px;
+}
+
+.workspace-panel {
+  grid-area: content;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hint-line {
+  grid-area: hint;
+  min-height: 28px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  background: #14171d;
+  border-top: 1px solid #1f232b;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bottomnav {
+  grid-area: bottomnav;
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid #1f232b;
+  background: #11141a;
+  min-height: 56px;
+}
+
+.symbol-bar {
+  grid-area: symbol;
+  display: flex;
+  flex-direction: column;
+  background: #14171d;
+  border-top: 1px solid #1f232b;
+  padding: 4px 0;
+  gap: 4px;
 }
 
 .topbar button {
@@ -254,6 +309,45 @@ html, body, #root {
   background: var(--accent);
   color: #0e0f12;
 }
+
+.tempo-sheet {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (orientation: landscape) {
+  .app {
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 48px minmax(0, 1fr) auto 56px;
+    grid-template-areas:
+      "content topbar"
+      "content symbol"
+      "content hint"
+      "content bottomnav";
+    height: 100dvh;
+  }
+
+  .app.kb-open {
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 48px minmax(0, 1fr) auto 0;
+    grid-template-areas:
+      "content topbar"
+      "content symbol"
+      "content hint"
+      "content bottomnav";
+  }
+
+  .workspace-panel {
+    border-right: 1px solid #1f232b;
+  }
+
+  .symbol-bar {
+    overflow-y: auto;
+    border-top: none;
+    border-bottom: 1px solid #1f232b;
+  }
+}
+
 
 
 

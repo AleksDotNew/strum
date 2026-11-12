@@ -399,7 +399,7 @@ export default function App() {
         onHush={handleHush}
       />
 
-      <section style={{ height: '100%', 'min-height': '0', overflow: 'hidden' }}>
+      <section class="workspace-panel" style={{ height: '100%', 'min-height': '0', overflow: 'hidden' }}>
         {currentTab() === 'code' && (
           <Editor
             initialCode={code()}
