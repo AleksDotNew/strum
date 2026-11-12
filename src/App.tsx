@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js'
+import { createSignal, onCleanup } from 'solid-js'
 import './styles/app.css'
 import { TopBar } from './ui/TopBar'
 import { HintLine } from './ui/HintLine'
@@ -19,6 +19,11 @@ export default function App() {
   const [code, setCode] = createSignal('s("bd sd")')
   const [cursorCtx, setCursorCtx] = createSignal<CursorCtx>('mini')
   let editorApi: EditorApi | undefined
+  let unsubscribeHighlight: (() => void) | undefined
+
+  onCleanup(() => {
+    unsubscribeHighlight?.()
+  })
 
   const updateCursor = (pos: number) => {
     const currentCode = editorApi ? editorApi.getCode() : code()
@@ -38,6 +43,11 @@ export default function App() {
       setHint('Запуск аудиодвижка...')
       try {
         const engine = await initEngine()
+        if (!unsubscribeHighlight) {
+          unsubscribeHighlight = engine.onHighlight((haps, time) => {
+            editorApi?.highlightHaps(time, haps)
+          })
+        }
         const currentCode = editorApi ? editorApi.getCode() : code()
         const res = await engine.evaluate(currentCode)
         if (res.ok) {
@@ -46,6 +56,9 @@ export default function App() {
           setIsError(false)
           setHint('Воспроизведение: ' + currentCode)
           editorApi?.markError(null)
+          if (res.meta?.miniLocations) {
+            editorApi?.setMiniLocations(res.meta.miniLocations)
+          }
         } else {
           setStatus('error')
           setIsError(true)
@@ -64,6 +77,11 @@ export default function App() {
     setStatus('evaluating')
     try {
       const engine = await initEngine()
+      if (!unsubscribeHighlight) {
+        unsubscribeHighlight = engine.onHighlight((haps, time) => {
+          editorApi?.highlightHaps(time, haps)
+        })
+      }
       const currentCode = editorApi ? editorApi.getCode() : code()
       const res = await engine.evaluate(currentCode)
       if (res.ok) {
@@ -72,6 +90,9 @@ export default function App() {
         setIsError(false)
         setHint('Код обновлён')
         editorApi?.markError(null)
+        if (res.meta?.miniLocations) {
+          editorApi?.setMiniLocations(res.meta.miniLocations)
+        }
       } else {
         setStatus('error')
         setIsError(true)

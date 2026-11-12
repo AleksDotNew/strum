@@ -5,6 +5,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { bracketMatching, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { keymap, lineNumbers, highlightActiveLine, Decoration, type DecorationSet } from '@codemirror/view'
+import { highlightExtension, highlightMiniLocations, updateMiniLocations } from '@strudel/codemirror'
 
 export const setErrorLine = StateEffect.define<number | null>()
 
@@ -77,6 +78,8 @@ export interface EditorApi {
   insert(text: string, cursorOffset?: number): void
   cursor(): number
   markError(line: number | null): void
+  setMiniLocations(locations: any[]): void
+  highlightHaps(time: number, haps: any[]): void
   view: EditorView
 }
 
@@ -113,6 +116,7 @@ export function Editor(props: EditorProps) {
         EditorView.lineWrapping,
         keymap.of([...defaultKeymap, ...historyKeymap]),
         updateListener,
+        highlightExtension,
         errorLineField,
         darkTheme,
       ],
@@ -144,6 +148,16 @@ export function Editor(props: EditorProps) {
       cursor: () => view.state.selection.main.head,
       markError: (line: number | null) => {
         view.dispatch({ effects: setErrorLine.of(line) })
+      },
+      setMiniLocations: (locations: any[]) => {
+        try {
+          updateMiniLocations(view, locations || [])
+        } catch {}
+      },
+      highlightHaps: (time: number, haps: any[]) => {
+        try {
+          highlightMiniLocations(view, time, haps)
+        } catch {}
       },
       view,
     }

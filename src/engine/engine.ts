@@ -1,15 +1,19 @@
 import { repl, evalScope } from '@strudel/core'
 import { transpiler } from '@strudel/transpiler'
 import { getAudioContext, webaudioOutput, registerSynthSounds, samples } from '@strudel/webaudio'
+import { Drawer } from '@strudel/draw'
 import { toEngineError, type EngineError } from './errors'
 
 export type { EngineError }
-export type EvalResult = { ok: true } | { ok: false; error: EngineError }
+export type EvalResult = { ok: true; meta?: any } | { ok: false; error: EngineError }
+
+export type HighlightCallback = (haps: any[], time: number) => void
 
 export interface Engine {
   evaluate(code: string): Promise<EvalResult>
   stop(): void
   setCps(cps: number): void
+  onHighlight(cb: HighlightCallback): () => void
   readonly started: boolean
 }
 
@@ -33,10 +37,10 @@ async function create(): Promise<Engine> {
   )
 
   await registerSynthSounds()
-  // Built-in default sample pack
   await samples('github:tidalcycles/dirt-samples')
 
   let lastError: unknown = null
+  let lastMeta: any = null
   const r = repl({
     defaultOutput: webaudioOutput,
     getTime: () => getAudioContext().currentTime,
@@ -44,7 +48,20 @@ async function create(): Promise<Engine> {
     onEvalError: (e: unknown) => {
       lastError = e
     },
+    afterEval: (options: any) => {
+      lastMeta = options?.meta
+    },
   })
+
+  const highlightListeners = new Set<HighlightCallback>()
+  const drawer = new Drawer((haps: any[], time: number) => {
+    const currentFrame = haps.filter((hap: any) =>
+      typeof hap.isActive === 'function' ? hap.isActive(time) : true
+    )
+    for (const listener of highlightListeners) {
+      listener(currentFrame, time)
+    }
+  }, [0, 0])
 
   let started = false
 
@@ -54,6 +71,7 @@ async function create(): Promise<Engine> {
     },
     async evaluate(code: string) {
       lastError = null
+      lastMeta = null
       try {
         await r.evaluate(code)
       } catch (e) {
@@ -63,15 +81,23 @@ async function create(): Promise<Engine> {
         return { ok: false, error: toEngineError(lastError) }
       }
       started = true
-      return { ok: true }
+      drawer.start(r.scheduler)
+      drawer.invalidate(r.scheduler)
+      return { ok: true, meta: lastMeta }
     },
     stop() {
       r.stop()
+      drawer.stop()
       started = false
     },
     setCps(cps: number) {
       r.setCps(cps)
     },
+    onHighlight(cb: HighlightCallback) {
+      highlightListeners.add(cb)
+      return () => {
+        highlightListeners.delete(cb)
+      }
+    },
   }
 }
-
