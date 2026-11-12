@@ -121,3 +121,4 @@ export function findNotePatternsInCode(code: string): NotePatternCandidate[] {
     }
   })
 }
+

@@ -40,3 +40,4 @@ test.describe('mixer channel strips and mute/gain control', () => {
     await expect(cmContent).toContainText('.gain(0)')
   })
 })
+

@@ -42,3 +42,4 @@ describe('pianoRollModel - melodic note patterns to interactive piano roll', () 
     expect(patterns[0].supported).toBe(true)
   })
 })
+
