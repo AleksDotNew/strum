@@ -29,6 +29,8 @@ import { NumberSliderSheet } from './ui/NumberSliderSheet'
 import { StepGrid } from './ui/StepGrid'
 import { SoundBrowser } from './ui/SoundBrowser'
 import { MixerScreen } from './ui/MixerScreen'
+import { RecordSheet } from './ui/RecordSheet'
+import type { RecordResult } from './engine/audioRecorder'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -40,6 +42,9 @@ export default function App() {
   const [showProjects, setShowProjects] = createSignal(false)
   const [showPrebakes, setShowPrebakes] = createSignal(false)
   const [showTemplates, setShowTemplates] = createSignal(false)
+  const [showRecordSheet, setShowRecordSheet] = createSignal(false)
+  const [recordResult, setRecordResult] = createSignal<RecordResult | null>(null)
+  const [recordInitialTab, setRecordInitialTab] = createSignal<'live' | 'bounce'>('live')
   const [showNumberSlider, setShowNumberSlider] = createSignal(false)
   const [activeLiteral, setActiveLiteral] = createSignal<CodeLiteral | null>(null)
   const [projectId, setProjectId] = createSignal('')
@@ -422,6 +427,11 @@ export default function App() {
         onBpmClick={() => setShowTempoSheet(true)}
         onMenuClick={() => setShowMenu(true)}
         onHush={handleHush}
+        onOpenRecordSheet={(res, tab) => {
+          setRecordResult(res || null)
+          setRecordInitialTab(tab || 'live')
+          setShowRecordSheet(true)
+        }}
       />
 
       <section class="workspace-panel" style={{ height: '100%', 'min-height': '0', overflow: 'hidden' }}>
@@ -568,6 +578,17 @@ export default function App() {
                 class="menu-action-btn"
                 onClick={() => {
                   setShowMenu(false)
+                  setRecordResult(null)
+                  setRecordInitialTab('bounce')
+                  setShowRecordSheet(true)
+                }}
+              >
+                💽 Bounce to WAV...
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
                   handleExport()
                 }}
               >
@@ -628,6 +649,14 @@ export default function App() {
           onClose={() => setShowTemplates(false)}
         />
       </Show>
+
+      <RecordSheet
+        open={showRecordSheet()}
+        currentCode={editorApi ? editorApi.getCode() : code()}
+        initialResult={recordResult()}
+        initialTab={recordInitialTab()}
+        onClose={() => setShowRecordSheet(false)}
+      />
     </main>
   )
 }

@@ -1,3 +1,8 @@
+import { createSignal, onCleanup } from 'solid-js'
+import { getAudioContext } from '@strudel/webaudio'
+import { audioRecorder, type RecordResult } from '../engine/audioRecorder'
+import { formatRecordTime } from './RecordSheet'
+
 export interface TopBarProps {
   playing: boolean
   bpm: number
@@ -7,11 +12,60 @@ export interface TopBarProps {
   onBpmClick(): void
   onMenuClick(): void
   onHush?(): void
+  onOpenRecordSheet?(result?: RecordResult | null, initialTab?: 'live' | 'bounce'): void
+  onBounceClick?(): void
 }
 
 export function TopBar(props: TopBarProps) {
   let startY = 0
   let isPointerDown = false
+
+  const [isRecording, setIsRecording] = createSignal(false)
+  const [seconds, setSeconds] = createSignal(0)
+  let timerInterval: any = null
+
+  const handleToggleRecord = async () => {
+    if (!isRecording()) {
+      try {
+        let ctx: AudioContext
+        try {
+          ctx = getAudioContext()
+        } catch {
+          const Ctx = typeof AudioContext !== 'undefined' ? AudioContext : (globalThis as any).webkitAudioContext
+          ctx = new Ctx()
+        }
+        if (ctx.state === 'suspended') {
+          await ctx.resume()
+        }
+        audioRecorder.start(ctx)
+        setIsRecording(true)
+        setSeconds(0)
+        if (timerInterval) clearInterval(timerInterval)
+        timerInterval = setInterval(() => {
+          setSeconds((s) => s + 1)
+        }, 1000)
+      } catch (e) {
+        console.error('[TopBar] Failed to start recording:', e)
+      }
+    } else {
+      if (timerInterval) {
+        clearInterval(timerInterval)
+        timerInterval = null
+      }
+      setIsRecording(false)
+      try {
+        const result = await audioRecorder.stop()
+        props.onOpenRecordSheet?.(result, 'live')
+      } catch (e) {
+        console.error('[TopBar] Failed to stop recording:', e)
+        props.onOpenRecordSheet?.(null, 'live')
+      }
+    }
+  }
+
+  onCleanup(() => {
+    if (timerInterval) clearInterval(timerInterval)
+  })
 
   const handlePointerDown = (e: PointerEvent) => {
     if ((e.target as HTMLElement).closest('button')) return
@@ -62,6 +116,27 @@ export function TopBar(props: TopBarProps) {
           onClick={props.onBpmClick}
         >
           {props.bpm} bpm
+        </button>
+        <button
+          class="rec-btn"
+          classList={{ recording: isRecording() }}
+          aria-label={isRecording() ? 'Stop Recording' : 'Record'}
+          onClick={handleToggleRecord}
+          style={{
+            'min-width': '48px',
+            'min-height': '48px',
+            display: 'flex',
+            'align-items': 'center',
+            'justify-content': 'center',
+            gap: '4px',
+            color: isRecording() ? '#ff4d4d' : 'var(--muted)',
+            'font-size': '13px',
+            'font-family': 'monospace',
+            padding: '0 8px',
+          }}
+        >
+          <span class="rec-dot" style={{ color: '#ff4d4d' }}>●</span>
+          <span>{isRecording() ? formatRecordTime(seconds()) : 'REC'}</span>
         </button>
       </div>
 

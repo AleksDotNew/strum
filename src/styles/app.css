@@ -137,6 +137,23 @@ html, body, #root {
   letter-spacing: 0.5px;
 }
 
+.topbar .rec-btn {
+  font-family: monospace;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+@keyframes rec-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+.topbar .rec-btn.recording .rec-dot {
+  animation: rec-pulse 1s infinite;
+}
+
 .hint-line {
   min-height: 28px;
   padding: 4px 12px;
