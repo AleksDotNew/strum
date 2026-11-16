@@ -36,6 +36,7 @@ import { VisualCanvas } from './ui/VisualCanvas'
 import { VisualsSheet } from './ui/VisualsSheet'
 import { VISUAL_PRESETS } from './visuals/visualPresets'
 import { SnippetsSheet } from './ui/SnippetsSheet'
+import { updateForegroundPlayback, onMediaAction } from './engine/foregroundBridge'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -156,10 +157,30 @@ export default function App() {
         runCurrentPrebakes([DEFAULT_PREBAKE_ID])
       }
     } catch {}
+
+    const unsubStop = onMediaAction('stop', () => {
+      handleHush()
+    })
+    const unsubPause = onMediaAction('pause', () => {
+      handleHush()
+    })
+    const unsubPlay = onMediaAction('play', () => {
+      if (!playing()) {
+        togglePlay()
+      }
+    })
+
+    onCleanup(() => {
+      unsubStop()
+      unsubPause()
+      unsubPlay()
+      updateForegroundPlayback('none').catch(() => {})
+    })
   })
 
   onCleanup(() => {
     unsubscribeHighlight?.()
+    updateForegroundPlayback('none').catch(() => {})
   })
 
   const setAppHint = (msg: string, error = false) => {
@@ -217,6 +238,7 @@ export default function App() {
       setStatus('stopped')
       setAppHint('Воспроизведение остановлено')
       editorApi?.markError(null)
+      updateForegroundPlayback('none').catch(() => {})
     } else {
       setStatus('loading')
       setAppHint('Запуск аудиодвижка...')
@@ -241,6 +263,7 @@ export default function App() {
             editorApi?.setWidgets(res.meta.widgets)
           }
           saveSnapshotIfChanged(projectId(), currentCode)
+          updateForegroundPlayback('playing', projectName()).catch(() => {})
         } else {
           setStatus('error')
           setAppHint(res.error.message, true)
@@ -276,6 +299,7 @@ export default function App() {
           editorApi?.setWidgets(res.meta.widgets)
         }
         saveSnapshotIfChanged(projectId(), currentCode)
+        updateForegroundPlayback('playing', projectName()).catch(() => {})
       } else {
         setStatus('error')
         setAppHint(res.error.message, true)
@@ -304,6 +328,7 @@ export default function App() {
       setStatus('idle')
       setHint('Тишина (hush)')
       editorApi?.markError(null)
+      updateForegroundPlayback('none').catch(() => {})
     } catch {}
   }
 
