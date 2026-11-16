@@ -37,6 +37,16 @@ export interface TemplateRecord {
   createdAt: number
 }
 
+export interface SnippetRecord {
+  id: string
+  name: string
+  category: 'Beats' | 'Bass' | 'Melodies' | 'FX' | 'Custom' | string
+  code: string
+  tags?: string[]
+  isBuiltin?: boolean
+  createdAt: number
+}
+
 export interface SamplepackRecord {
   id: string
   name: string
@@ -76,6 +86,11 @@ export interface StrumDB extends DBSchema {
     value: SamplepackRecord
     indexes: { updatedAt: number }
   }
+  snippets: {
+    key: string
+    value: SnippetRecord
+    indexes: { category: string; createdAt: number }
+  }
   settings: {
     key: string
     value: any
@@ -83,7 +98,7 @@ export interface StrumDB extends DBSchema {
 }
 
 export const DB_NAME = 'strum_db'
-export const DB_VERSION = 3
+export const DB_VERSION = 4
 
 let lastTimestamp = 0
 export function monotonicNow(): number {
@@ -125,6 +140,11 @@ export function initDb(): Promise<IDBPDatabase<StrumDB>> {
         if (!db.objectStoreNames.contains('samplepacks')) {
           const packStore = db.createObjectStore('samplepacks', { keyPath: 'id' })
           packStore.createIndex('updatedAt', 'updatedAt')
+        }
+        if (!db.objectStoreNames.contains('snippets')) {
+          const snippetStore = db.createObjectStore('snippets', { keyPath: 'id' })
+          snippetStore.createIndex('category', 'category')
+          snippetStore.createIndex('createdAt', 'createdAt')
         }
       },
     })

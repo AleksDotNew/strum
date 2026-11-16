@@ -35,6 +35,7 @@ import type { RecordResult } from './engine/audioRecorder'
 import { VisualCanvas } from './ui/VisualCanvas'
 import { VisualsSheet } from './ui/VisualsSheet'
 import { VISUAL_PRESETS } from './visuals/visualPresets'
+import { SnippetsSheet } from './ui/SnippetsSheet'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -46,6 +47,7 @@ export default function App() {
   const [showProjects, setShowProjects] = createSignal(false)
   const [showPrebakes, setShowPrebakes] = createSignal(false)
   const [showTemplates, setShowTemplates] = createSignal(false)
+  const [showSnippets, setShowSnippets] = createSignal(false)
   const [showRecordSheet, setShowRecordSheet] = createSignal(false)
   const [showVisualsSheet, setShowVisualsSheet] = createSignal(false)
   const [visualOpacity, setVisualOpacity] = createSignal(0.0)
@@ -419,6 +421,24 @@ export default function App() {
     setAppHint(`Звук "${soundName}" добавлен в код`)
   }
 
+  const handleInsertSnippet = (snippetCode: string) => {
+    if (editorApi) {
+      editorApi.insert(snippetCode)
+      const newCode = editorApi.getCode()
+      setCode(newCode)
+      updateCursor(editorApi.cursor())
+      if (playing()) {
+        initEngine()
+          .then((engine) => engine.evaluate(newCode))
+          .catch(() => {})
+      }
+    } else {
+      const newCode = code() ? `${code()}\n${snippetCode}` : snippetCode
+      setCode(newCode)
+    }
+    setAppHint('Сниппет вставлен в код')
+  }
+
   const handleAuditionSound = async (soundName: string) => {
     try {
       const engine = await initEngine()
@@ -535,6 +555,7 @@ export default function App() {
         activeLiteral={activeLiteral()}
         onOpenSlider={() => setShowNumberSlider(true)}
         onToggleMute={handleToggleMute}
+        onOpenSnippets={() => setShowSnippets(true)}
         onAction={handleSymbolAction}
       />
       <BottomNav currentTab={currentTab()} onSelectTab={setCurrentTab} />
@@ -616,6 +637,15 @@ export default function App() {
                 }}
               >
                 📑 Шаблоны проектов
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
+                  setShowSnippets(true)
+                }}
+              >
+                ✂️ Сниппеты и паттерны
               </button>
               <button
                 class="menu-action-btn"
@@ -717,6 +747,13 @@ export default function App() {
         initialResult={recordResult()}
         initialTab={recordInitialTab()}
         onClose={() => setShowRecordSheet(false)}
+      />
+
+      <SnippetsSheet
+        open={showSnippets()}
+        selectedCode={editorApi?.getSelection?.() || ''}
+        onInsert={handleInsertSnippet}
+        onClose={() => setShowSnippets(false)}
       />
     </main>
   )

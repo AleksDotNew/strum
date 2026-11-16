@@ -9,6 +9,7 @@ export interface SymbolBarProps {
   onAction(action: SymbolAction): void
   onOpenSlider?(): void
   onToggleMute?(): void
+  onOpenSnippets?(): void
 }
 
 export function SymbolBar(props: SymbolBarProps) {
@@ -36,6 +37,22 @@ export function SymbolBar(props: SymbolBarProps) {
           }}
         >
           _$
+        </button>
+        <button
+          class="symbol-btn symbol-btn-snippets"
+          data-symbol="✂️"
+          data-testid="symbol-snippets-btn"
+          style={{
+            'font-weight': '700',
+            color: 'var(--accent)',
+          }}
+          title="Библиотека сниппетов (✂️)"
+          onPointerDown={(e) => {
+            e.preventDefault()
+            props.onOpenSnippets?.()
+          }}
+        >
+          ✂️
         </button>
         <Show when={props.activeLiteral?.type === 'number'}>
           <button

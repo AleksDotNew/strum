@@ -267,6 +267,7 @@ export interface EditorApi {
   setCode(c: string): void
   insert(text: string, cursorOffset?: number): void
   cursor(): number
+  getSelection?(): string
   markError(line: number | null): void
   setMiniLocations(locations: any[]): void
   setWidgets(widgets: any[]): void
@@ -348,6 +349,10 @@ export function Editor(props: EditorProps) {
         view.focus()
       },
       cursor: () => view.state.selection.main.head,
+      getSelection: () => {
+        const sel = view.state.selection.main
+        return sel.from !== sel.to ? view.state.sliceDoc(sel.from, sel.to) : ''
+      },
       markError: (line: number | null) => {
         view.dispatch({ effects: setErrorLine.of(line) })
       },
