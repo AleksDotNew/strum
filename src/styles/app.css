@@ -491,6 +491,68 @@ html, body, #root {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
 }
 
+/* ============================================================
+   VISUAL CANVAS & STAGE MODE
+   ============================================================ */
+.visual-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--visual-opacity, 0);
+  transition: opacity 0.25s ease;
+}
+
+.topbar .vis-btn {
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.topbar .vis-btn:active {
+  color: var(--accent);
+}
+
+/* When visuals are active (opacity > 0), make workspace & editor semi-transparent */
+.app[data-visual-active="true"] .workspace-panel,
+.app[data-visual-active="true"] .cm-editor {
+  background-color: rgba(14, 15, 18, 0.45) !important;
+  backdrop-filter: blur(2px);
+}
+
+.app[data-visual-active="true"] .cm-gutters {
+  background-color: rgba(20, 23, 29, 0.45) !important;
+}
+
+/* Stage Mode (opacity >= 0.85): maximize visual immersion */
+.app[data-stage-mode="true"] .workspace-panel,
+.app[data-stage-mode="true"] .cm-editor {
+  background-color: rgba(14, 15, 18, 0.15) !important;
+}
+
+.app[data-stage-mode="true"] .cm-content {
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+}
+
+.app[data-stage-mode="true"] .cm-content:hover,
+.app[data-stage-mode="true"] .cm-content:focus-within {
+  opacity: 1;
+}
+
+.app[data-stage-mode="true"] .cm-gutters {
+  opacity: 0.3;
+}
+
+[data-theme="switch-angel"].app[data-visual-active="true"] .workspace-panel,
+[data-theme="switch-angel"].app[data-visual-active="true"] .cm-editor {
+  background-color: rgba(10, 10, 10, 0.45) !important;
+}
+
+
 
 
 

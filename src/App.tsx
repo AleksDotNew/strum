@@ -31,6 +31,9 @@ import { SoundBrowser } from './ui/SoundBrowser'
 import { MixerScreen } from './ui/MixerScreen'
 import { RecordSheet } from './ui/RecordSheet'
 import type { RecordResult } from './engine/audioRecorder'
+import { VisualCanvas } from './ui/VisualCanvas'
+import { VisualsSheet } from './ui/VisualsSheet'
+import { VISUAL_PRESETS } from './visuals/visualPresets'
 
 export default function App() {
   const [playing, setPlaying] = createSignal(false)
@@ -43,6 +46,9 @@ export default function App() {
   const [showPrebakes, setShowPrebakes] = createSignal(false)
   const [showTemplates, setShowTemplates] = createSignal(false)
   const [showRecordSheet, setShowRecordSheet] = createSignal(false)
+  const [showVisualsSheet, setShowVisualsSheet] = createSignal(false)
+  const [visualOpacity, setVisualOpacity] = createSignal(0.0)
+  const [activePresetId, setActivePresetId] = createSignal<string>(VISUAL_PRESETS[0].id)
   const [recordResult, setRecordResult] = createSignal<RecordResult | null>(null)
   const [recordInitialTab, setRecordInitialTab] = createSignal<'live' | 'bounce'>('live')
   const [showNumberSlider, setShowNumberSlider] = createSignal(false)
@@ -417,14 +423,30 @@ export default function App() {
   }
 
   return (
-    <main class="app" data-theme={theme()} ref={appRef}>
+    <main
+      class="app"
+      data-theme={theme()}
+      data-visual-active={visualOpacity() > 0}
+      data-stage-mode={visualOpacity() >= 0.85}
+      style={{
+        '--visual-opacity': visualOpacity(),
+      }}
+      ref={appRef}
+    >
+      <VisualCanvas
+        opacity={visualOpacity()}
+        activePresetId={activePresetId()}
+        playing={playing()}
+      />
       <TopBar
         playing={playing()}
         bpm={bpm()}
         status={status()}
+        visualActive={visualOpacity() > 0}
         onTogglePlay={togglePlay}
         onEval={handleEval}
         onBpmClick={() => setShowTempoSheet(true)}
+        onOpenVisuals={() => setShowVisualsSheet((s) => !s)}
         onMenuClick={() => setShowMenu(true)}
         onHush={handleHush}
         onOpenRecordSheet={(res, tab) => {
@@ -578,6 +600,15 @@ export default function App() {
                 class="menu-action-btn"
                 onClick={() => {
                   setShowMenu(false)
+                  setShowVisualsSheet(true)
+                }}
+              >
+                🎨 Visuals & Stage Mode...
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
                   setRecordResult(null)
                   setRecordInitialTab('bounce')
                   setShowRecordSheet(true)
@@ -649,6 +680,15 @@ export default function App() {
           onClose={() => setShowTemplates(false)}
         />
       </Show>
+
+      <VisualsSheet
+        open={showVisualsSheet()}
+        opacity={visualOpacity()}
+        onOpacityChange={setVisualOpacity}
+        activePresetId={activePresetId()}
+        onSelectPreset={setActivePresetId}
+        onClose={() => setShowVisualsSheet(false)}
+      />
 
       <RecordSheet
         open={showRecordSheet()}

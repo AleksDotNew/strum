@@ -14,6 +14,8 @@ export interface TopBarProps {
   onHush?(): void
   onOpenRecordSheet?(result?: RecordResult | null, initialTab?: 'live' | 'bounce'): void
   onBounceClick?(): void
+  onOpenVisuals?(): void
+  visualActive?: boolean
 }
 
 export function TopBar(props: TopBarProps) {
@@ -140,10 +142,26 @@ export function TopBar(props: TopBarProps) {
         </button>
       </div>
 
-      <div style={{ display: 'flex', 'align-items': 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', 'align-items': 'center', gap: '4px' }}>
         <span class="status-pill" data-testid="engine-status">
           {props.status}
         </span>
+        <button
+          class="vis-btn"
+          aria-label="Visuals & Stage Mode"
+          onClick={() => props.onOpenVisuals?.()}
+          style={{
+            'min-width': '48px',
+            'min-height': '48px',
+            display: 'flex',
+            'align-items': 'center',
+            'justify-content': 'center',
+            color: props.visualActive ? 'var(--accent)' : 'var(--muted)',
+            'font-size': '15px',
+          }}
+        >
+          👁️
+        </button>
         <button aria-label="Eval" onClick={props.onEval}>
           ⟳
         </button>
