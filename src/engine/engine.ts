@@ -6,7 +6,9 @@ import { Drawer } from '@strudel/draw'
 import { toEngineError, type EngineError } from './errors'
 import { runPrebake, type PrebakeReport } from '../prebake/runner'
 import type { PrebakeScript } from '../storage/db'
+import { runAudioGC } from './audioGC'
 
+export * from './audioGC'
 export type { EngineError, PrebakeReport }
 export type EvalResult = { ok: true; meta?: any } | { ok: false; error: EngineError }
 
@@ -111,6 +113,11 @@ async function create(): Promise<Engine> {
       r.stop()
       drawer.stop()
       started = false
+      try {
+        runAudioGC(getAudioContext())
+      } catch (e) {
+        console.warn('Audio GC failed on stop:', e)
+      }
     },
     setCps(cps: number) {
       r.setCps(cps)
