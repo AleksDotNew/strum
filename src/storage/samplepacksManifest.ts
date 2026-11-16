@@ -1,0 +1,703 @@
+// Generated manifest of all built-in samplepacks
+export interface BuiltinPackMeta {
+  id: string
+  name: string
+  by: string
+  about: string
+  filename: string
+  sounds: string[]
+}
+
+export const EMBEDDED_BUILTIN_PACKS: BuiltinPackMeta[] = [
+  {
+    "id": "acid",
+    "name": "Acid Lines",
+    "by": "Weft Loom",
+    "about": "Acid at 132: squelching basses to play from the roll, a tight kit and a cowbell. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Acid Lines.weftpack",
+    "sounds": [
+      "acid_kick",
+      "acid_clap",
+      "acid_hat",
+      "acid_openhat",
+      "acid_cowbell",
+      "acid_squelch"
+    ]
+  },
+  {
+    "id": "amapiano",
+    "name": "Amapiano",
+    "by": "Weft Loom",
+    "about": "Amapiano at 113: log drums on three notes, a shaker that swings, a soft kick, a rim and a clap, and a jazzy piano chord. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Amapiano.weftpack",
+    "sounds": [
+      "amapiano_kick",
+      "amapiano_log",
+      "amapiano_loglow",
+      "amapiano_loghigh",
+      "amapiano_shaker",
+      "amapiano_rim",
+      "amapiano_clap",
+      "amapiano_piano"
+    ]
+  },
+  {
+    "id": "fields",
+    "name": "Ambient Fields",
+    "by": "Weft Loom",
+    "about": "Ambient at 70: two drones to lie under a song, wind, a bell, a shimmer and a soft kick. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Ambient Fields.weftpack",
+    "sounds": [
+      "fields_drone",
+      "fields_drone2",
+      "fields_wind",
+      "fields_bell",
+      "fields_shimmer",
+      "fields_kick"
+    ]
+  },
+  {
+    "id": "baile",
+    "name": "Baile Funk",
+    "by": "Weft Loom",
+    "about": "Baile funk at 130: the tamborz\u00e3o on a booming kick and two hand drums, a clap, hats, a samba whistle and a shout. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Baile Funk.weftpack",
+    "sounds": [
+      "baile_kick",
+      "baile_drum",
+      "baile_drumhi",
+      "baile_clap",
+      "baile_hat",
+      "baile_whistle",
+      "baile_shout"
+    ]
+  },
+  {
+    "id": "boombap",
+    "name": "Boom Bap",
+    "by": "Weft Loom",
+    "about": "Boom bap at 90: a heavy kick, a snare that cracks in a room, hats, a break to cut up, crackle, and a dusty piano chord to loop. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Boom Bap.weftpack",
+    "sounds": [
+      "boombap_kick",
+      "boombap_snare",
+      "boombap_hat",
+      "boombap_crackle",
+      "boombap_piano",
+      "boombap_break"
+    ]
+  },
+  {
+    "id": "breaks",
+    "name": "Breakbeat Heat",
+    "by": "Weft Loom",
+    "about": "Breakbeat at 135: a break to cut into parts, a kick, snare, hats, ride and a crash, and a bass and a stab to go with them. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Breakbeat Heat.weftpack",
+    "sounds": [
+      "breaks_kick",
+      "breaks_snare",
+      "breaks_hat",
+      "breaks_ride",
+      "breaks_crash",
+      "breaks_break"
+    ]
+  },
+  {
+    "id": "cellar",
+    "name": "Cellar Techno",
+    "by": "Weft Loom",
+    "about": "Dark techno at 128: a kick that drives, a rumble under it, metal hats, a clap with a long tail, a drone and a riser. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Cellar Techno.weftpack",
+    "sounds": [
+      "cellar_kick",
+      "cellar_rumble",
+      "cellar_hat",
+      "cellar_openhat",
+      "cellar_clap",
+      "cellar_tick",
+      "cellar_drone",
+      "cellar_riser",
+      "cellar_loop"
+    ]
+  },
+  {
+    "id": "chip",
+    "name": "Chip Arcade",
+    "by": "Weft Loom",
+    "about": "Chiptune at 150: drums made of noise and square waves, a coin, a laser and a jump, and square and triangle sounds for tunes. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Chip Arcade.weftpack",
+    "sounds": [
+      "chip_kick",
+      "chip_snare",
+      "chip_hat",
+      "chip_coin",
+      "chip_laser",
+      "chip_jump"
+    ]
+  },
+  {
+    "id": "cinema",
+    "name": "Cinematic Hits",
+    "by": "Weft Loom",
+    "about": "Cinematic sounds at any tempo: an impact, a boom, a riser and a fall, a whoosh, a dark drone, a braam and a tick for tension. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Cinematic Hits.weftpack",
+    "sounds": [
+      "cinema_impact",
+      "cinema_boom",
+      "cinema_riser",
+      "cinema_fall",
+      "cinema_whoosh",
+      "cinema_drone",
+      "cinema_braam",
+      "cinema_tick"
+    ]
+  },
+  {
+    "id": "deep",
+    "name": "Deep House",
+    "by": "Weft Loom",
+    "about": "Deep house at 122: a round kick, clap, hats and a shaker, and a minor ninth chord to stab or pad with. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Deep House.weftpack",
+    "sounds": [
+      "deep_kick",
+      "deep_clap",
+      "deep_hat",
+      "deep_openhat",
+      "deep_shaker",
+      "deep_chord"
+    ]
+  },
+  {
+    "id": "haze",
+    "name": "Downtempo Haze",
+    "by": "Weft Loom",
+    "about": "Downtempo at 95: a soft kick, a brushed snare, shaker and rim, a warm tape texture, and keys and basses that are easy on the ear. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Downtempo Haze.weftpack",
+    "sounds": [
+      "haze_kick",
+      "haze_brush",
+      "haze_shaker",
+      "haze_rim",
+      "haze_texture",
+      "haze_keys"
+    ]
+  },
+  {
+    "id": "phonk",
+    "name": "Drift Phonk",
+    "by": "Weft Loom",
+    "about": "Drift phonk at 130: a cowbell to play tunes on, a distorted 808, a hard kick, a snare and clap, hats and a low voice. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Drift Phonk.weftpack",
+    "sounds": [
+      "phonk_kick",
+      "phonk_boom",
+      "phonk_cowbell",
+      "phonk_snare",
+      "phonk_clap",
+      "phonk_hat",
+      "phonk_voice"
+    ]
+  },
+  {
+    "id": "dub",
+    "name": "Dub Chords",
+    "by": "Weft Loom",
+    "about": "Dub techno at 120: a minor chord stab made to be echoed, a soft kick, rim, shaker and the hiss under it all. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Dub Chords.weftpack",
+    "sounds": [
+      "dub_kick",
+      "dub_rim",
+      "dub_shaker",
+      "dub_hat",
+      "dub_chord",
+      "dub_hiss"
+    ]
+  },
+  {
+    "id": "dubstep",
+    "name": "Dubstep Wobble",
+    "by": "Weft Loom",
+    "about": "Dubstep at 140, felt at half the speed: a kick and a big snare on the third beat, hats, two wobble basses, a sub and a riser, and a growl to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Dubstep Wobble.weftpack",
+    "sounds": [
+      "dubstep_kick",
+      "dubstep_snare",
+      "dubstep_hat",
+      "dubstep_wobble",
+      "dubstep_wobblefast",
+      "dubstep_sub",
+      "dubstep_riser"
+    ]
+  },
+  {
+    "id": "dusty",
+    "name": "Dust Tapes",
+    "by": "Weft Loom",
+    "about": "Lo-fi at 84: a soft kick, a crushed snare, rim, hats, crackle and tape hiss, and keys that sound worn. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Dust Tapes.weftpack",
+    "sounds": [
+      "dusty_kick",
+      "dusty_snare",
+      "dusty_rim",
+      "dusty_hat",
+      "dusty_crackle",
+      "dusty_tape",
+      "dusty_keys"
+    ]
+  },
+  {
+    "id": "electro",
+    "name": "Electro Funk",
+    "by": "Weft Loom",
+    "about": "Electro at 128: a short boomy kick, a snappy snare and clap, a cowbell, toms, and a robot bass to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Electro Funk.weftpack",
+    "sounds": [
+      "electro_kick",
+      "electro_snare",
+      "electro_clap",
+      "electro_hat",
+      "electro_cowbell",
+      "electro_tom"
+    ]
+  },
+  {
+    "id": "funk",
+    "name": "Funk Pocket",
+    "by": "Weft Loom",
+    "about": "Funk at 104: a tight kick and snare, hats, a tambourine, a clav, a slapped bass and a horn stab, and presets to play each. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Funk Pocket.weftpack",
+    "sounds": [
+      "funk_kick",
+      "funk_snare",
+      "funk_hat",
+      "funk_openhat",
+      "funk_tambourine",
+      "funk_clav",
+      "funk_slap",
+      "funk_horns"
+    ]
+  },
+  {
+    "id": "gabber",
+    "name": "Gabber Rush",
+    "by": "Weft Loom",
+    "about": "Hardcore at 180: a kick distorted until it whistles, a snare and hats, and a hoover and a rave stab to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Gabber Rush.weftpack",
+    "sounds": [
+      "gabber_kick",
+      "gabber_kick2",
+      "gabber_snare",
+      "gabber_hat",
+      "gabber_stab"
+    ]
+  },
+  {
+    "id": "garage",
+    "name": "Garage Swing",
+    "by": "Weft Loom",
+    "about": "UK garage at 132: a two-step kit that swings, a shaker, and an organ stab with a garage bass to play under it. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Garage Swing.weftpack",
+    "sounds": [
+      "garage_kick",
+      "garage_snare",
+      "garage_clap",
+      "garage_hat",
+      "garage_shaker",
+      "garage_organ"
+    ]
+  },
+  {
+    "id": "glitch",
+    "name": "Glitch Lab",
+    "by": "Weft Loom",
+    "about": "Glitch and IDM at 110: bursts of crushed noise and tone, clicks, a broken kick and snare, and a texture that stutters. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Glitch Lab.weftpack",
+    "sounds": [
+      "glitch_burst",
+      "glitch_burst2",
+      "glitch_burst3",
+      "glitch_click",
+      "glitch_kick",
+      "glitch_snare",
+      "glitch_stutter"
+    ]
+  },
+  {
+    "id": "grime",
+    "name": "Grime Cold",
+    "by": "Weft Loom",
+    "about": "Grime at 140: a cold square bass, a snare that cracks, a kick, a clap and clicks, a pizzicato stab and a bell. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Grime Cold.weftpack",
+    "sounds": [
+      "grime_kick",
+      "grime_snare",
+      "grime_clap",
+      "grime_click",
+      "grime_hat",
+      "grime_square",
+      "grime_pizz",
+      "grime_bell"
+    ]
+  },
+  {
+    "id": "guithz",
+    "name": "GuitHZ",
+    "by": "HZ",
+    "about": "GuitHZ samplepack",
+    "filename": "GuitHZ.weftpack",
+    "sounds": [
+      "guithz_sound_0",
+      "guithz_sound_1",
+      "guithz_sound_2"
+    ]
+  },
+  {
+    "id": "hands",
+    "name": "Hand Drums",
+    "by": "Weft Loom",
+    "about": "Hand percussion at 110: low and high congas, a bongo, a shaker, a clave and a cowbell, and a marimba and a kalimba to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Hand Drums.weftpack",
+    "sounds": [
+      "hands_conga",
+      "hands_congahi",
+      "hands_bongo",
+      "hands_shaker",
+      "hands_clave",
+      "hands_cowbell"
+    ]
+  },
+  {
+    "id": "hyper",
+    "name": "Hyperpop Candy",
+    "by": "Weft Loom",
+    "about": "Hyperpop at 160: a kick pushed into the red, a crushed snare, hats, two sung chops up high, a supersaw stab, a laser and a glitch. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Hyperpop Candy.weftpack",
+    "sounds": [
+      "hyper_kick",
+      "hyper_snare",
+      "hyper_hat",
+      "hyper_voice",
+      "hyper_voice2",
+      "hyper_stab",
+      "hyper_laser",
+      "hyper_glitch"
+    ]
+  },
+  {
+    "id": "iron",
+    "name": "Industrial Iron",
+    "by": "Weft Loom",
+    "about": "Industrial at 125: a distorted kick, struck metal, a pipe, a noise snare and a clang with a room around it. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Industrial Iron.weftpack",
+    "sounds": [
+      "iron_kick",
+      "iron_metal",
+      "iron_metal2",
+      "iron_pipe",
+      "iron_snare",
+      "iron_clang"
+    ]
+  },
+  {
+    "id": "jazz",
+    "name": "Jazz Brushes",
+    "by": "Weft Loom",
+    "about": "Jazz at 120 with brushes: a sweep and a tap on the snare, a ride that swings, a soft kick, the hat foot, an upright bass, and a piano, a Rhodes and vibes to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Jazz Brushes.weftpack",
+    "sounds": [
+      "jazz_sweep",
+      "jazz_tap",
+      "jazz_ride",
+      "jazz_kick",
+      "jazz_foot",
+      "jazz_bass"
+    ]
+  },
+  {
+    "id": "jungle",
+    "name": "Jungle Breaks",
+    "by": "Weft Loom",
+    "about": "Jungle and drum and bass at 170: a chopped break to cut into parts, a tight kit, a ride and a sub boom. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Jungle Breaks.weftpack",
+    "sounds": [
+      "jungle_kick",
+      "jungle_snare",
+      "jungle_hat",
+      "jungle_ride",
+      "jungle_sub",
+      "jungle_break"
+    ]
+  },
+  {
+    "id": "minimal",
+    "name": "Minimal Click",
+    "by": "Weft Loom",
+    "about": "Minimal at 124: a tight kick, clicks and ticks, a rim, a wood block and a small sub blip. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Minimal Click.weftpack",
+    "sounds": [
+      "minimal_kick",
+      "minimal_click",
+      "minimal_tick",
+      "minimal_rim",
+      "minimal_wood",
+      "minimal_blip"
+    ]
+  },
+  {
+    "id": "motorik",
+    "name": "Motorik",
+    "by": "Weft Loom",
+    "about": "Motorik at 120, the steady beat of krautrock: a kick, a snare, hats and a tambourine, a pulsing bass and an organ that holds. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Motorik.weftpack",
+    "sounds": [
+      "motorik_kick",
+      "motorik_snare",
+      "motorik_hat",
+      "motorik_tambourine",
+      "motorik_pulse",
+      "motorik_organ"
+    ]
+  },
+  {
+    "id": "drive",
+    "name": "Night Drive",
+    "by": "Weft Loom",
+    "about": "Synthwave at 100: a big gated snare, a punchy kick, toms for fills, a warm pad and basses to arpeggiate. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Night Drive.weftpack",
+    "sounds": [
+      "drive_kick",
+      "drive_snare",
+      "drive_hat",
+      "drive_tom",
+      "drive_lowtom",
+      "drive_pad"
+    ]
+  },
+  {
+    "id": "disco",
+    "name": "Nu Disco",
+    "by": "Weft Loom",
+    "about": "Nu disco at 118: a kick, a clap, an open hat on the off beat, a tambourine, two string stabs and an octave bass to play. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Nu Disco.weftpack",
+    "sounds": [
+      "disco_kick",
+      "disco_clap",
+      "disco_hat",
+      "disco_openhat",
+      "disco_tambourine",
+      "disco_strings",
+      "disco_strings2"
+    ]
+  },
+  {
+    "id": "house",
+    "name": "Piano House",
+    "by": "Weft Loom",
+    "about": "Piano house at 124: a kick, a clap, open hats, a shaker and a tambourine, and two piano chords to stab. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Piano House.weftpack",
+    "sounds": [
+      "house_kick",
+      "house_clap",
+      "house_hat",
+      "house_openhat",
+      "house_shaker",
+      "house_tambourine",
+      "house_piano",
+      "house_piano2"
+    ]
+  },
+  {
+    "id": "psy",
+    "name": "Psytrance",
+    "by": "Weft Loom",
+    "about": "Psytrance at 145: a short kick, a rolling bass for the steps between, hats, a clap, a squelch, a zap and a riser. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Psytrance.weftpack",
+    "sounds": [
+      "psy_kick",
+      "psy_bass",
+      "psy_hat",
+      "psy_openhat",
+      "psy_clap",
+      "psy_squelch",
+      "psy_zap",
+      "psy_riser"
+    ]
+  },
+  {
+    "id": "dembow",
+    "name": "Reggaeton",
+    "by": "Weft Loom",
+    "about": "Reggaeton at 95: the dembow on a kick and snare, a rim, a timbal, a guiro and hats, and a bass, a pluck and a lead to play over it. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Reggaeton.weftpack",
+    "sounds": [
+      "dembow_kick",
+      "dembow_snare",
+      "dembow_rim",
+      "dembow_hat",
+      "dembow_timbal",
+      "dembow_guiro"
+    ]
+  },
+  {
+    "id": "space",
+    "name": "Space Drift",
+    "by": "Weft Loom",
+    "about": "Spacey electronica at 118: a soft kick, a filtered snare, a sweeping drone, radio bleeps, a bell and a laser zap. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Space Drift.weftpack",
+    "sounds": [
+      "space_kick",
+      "space_snare",
+      "space_hat",
+      "space_drone",
+      "space_bleep",
+      "space_bell",
+      "space_zap"
+    ]
+  },
+  {
+    "id": "trance",
+    "name": "Trance Gate",
+    "by": "Weft Loom",
+    "about": "Trance at 138: a kick, a clap, hats, a supersaw pluck chord, a pad, a riser and a fall, and a bass for the off beats. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Trance Gate.weftpack",
+    "sounds": [
+      "trance_kick",
+      "trance_clap",
+      "trance_hat",
+      "trance_openhat",
+      "trance_pluck",
+      "trance_pad",
+      "trance_riser",
+      "trance_fall"
+    ]
+  },
+  {
+    "id": "trap",
+    "name": "Trap Sub",
+    "by": "Weft Loom",
+    "about": "Trap at 140, felt at half the speed: a long 808, a punchy kick, snare and clap, hats to roll, and a dark bell. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "Trap Sub.weftpack",
+    "sounds": [
+      "trap_boom",
+      "trap_kick",
+      "trap_snare",
+      "trap_clap",
+      "trap_hat",
+      "trap_openhat",
+      "trap_bell"
+    ]
+  },
+  {
+    "id": "drill",
+    "name": "UK Drill",
+    "by": "Weft Loom",
+    "about": "UK drill at 142: 808s that slide down and up, a kick, a snare that falls late, a rim, hats that skip, and a dark piano and strings. Every sound in it is made from sums, not taken from a recording.",
+    "filename": "UK Drill.weftpack",
+    "sounds": [
+      "drill_kick",
+      "drill_snare",
+      "drill_rim",
+      "drill_hat",
+      "drill_slide",
+      "drill_slideup",
+      "drill_boom"
+    ]
+  },
+  {
+    "id": "breaks",
+    "name": "breaks",
+    "by": "me+swan",
+    "about": "breaks samplepack",
+    "filename": "breaks.weftpack",
+    "sounds": [
+      "breaks_sound_10_break",
+      "breaks_sound_11_break",
+      "breaks_sound_12_break",
+      "breaks_sound_13_break",
+      "breaks_sound_14_break"
+    ]
+  },
+  {
+    "id": "ctvox",
+    "name": "ctvox",
+    "by": "SwAn",
+    "about": "ctvox samplepack",
+    "filename": "ctvox.weftpack",
+    "sounds": [
+      "ctvox_sound_10_ctvox",
+      "ctvox_sound_11_ctvox",
+      "ctvox_sound_12_ctvox",
+      "ctvox_sound_13_ctvox",
+      "ctvox_sound_14_ctvox",
+      "ctvox_sound_15_ctvox",
+      "ctvox_sound_16_ctvox",
+      "ctvox_sound_17_ctvox",
+      "ctvox_sound_18_ctvox_bounce_1",
+      "ctvox_sound_19_ctvox",
+      "ctvox_sound_20_ctvox",
+      "ctvox_sound_21_ctvox",
+      "ctvox_sound_22_ctvox",
+      "ctvox_sound_23_ctvox",
+      "ctvox_sound_24_ctvox",
+      "ctvox_sound_25_ctvox",
+      "ctvox_sound_26_ctvox_sing_bounce_4",
+      "ctvox_sound_27_ctvox",
+      "ctvox_sound_28_ctvox"
+    ]
+  },
+  {
+    "id": "padsswan",
+    "name": "padsSwAn",
+    "by": "SwAn",
+    "about": "padsSwAn samplepack",
+    "filename": "padsSwAn.weftpack",
+    "sounds": [
+      "padsswan_sound_10_switch_angel_pad",
+      "padsswan_sound_11_switch_angel_pad",
+      "padsswan_sound_12_switch_angel_pad",
+      "padsswan_sound_13_switch_angel_pad",
+      "padsswan_sound_14_switch_angel_pad"
+    ]
+  },
+  {
+    "id": "samplepacksw",
+    "name": "samplepackSwAn",
+    "by": "Switch Angel / Weft Loom",
+    "about": "samplepackSwAn samplepack",
+    "filename": "samplepackSwAn.weftpack",
+    "sounds": [
+      "samplepacksw_sound_0",
+      "samplepacksw_sound_1",
+      "samplepacksw_sound_10_break",
+      "samplepacksw_sound_10_ctvox",
+      "samplepacksw_sound_10_switch_angel_pad",
+      "samplepacksw_sound_11_break",
+      "samplepacksw_sound_11_ctvox",
+      "samplepacksw_sound_11_switch_angel_pad",
+      "samplepacksw_sound_12_break",
+      "samplepacksw_sound_12_ctvox",
+      "samplepacksw_sound_12_switch_angel_pad",
+      "samplepacksw_sound_13_break",
+      "samplepacksw_sound_13_ctvox",
+      "samplepacksw_sound_13_switch_angel_pad",
+      "samplepacksw_sound_14_break",
+      "samplepacksw_sound_14_ctvox",
+      "samplepacksw_sound_14_switch_angel_pad",
+      "samplepacksw_sound_15_ctvox",
+      "samplepacksw_sound_16_ctvox",
+      "samplepacksw_sound_17_ctvox",
+      "samplepacksw_sound_18_ctvox_bounce_1",
+      "samplepacksw_sound_19_ctvox",
+      "samplepacksw_sound_2",
+      "samplepacksw_sound_20_ctvox",
+      "samplepacksw_sound_21_ctvox",
+      "samplepacksw_sound_22_ctvox",
+      "samplepacksw_sound_23_ctvox",
+      "samplepacksw_sound_24_ctvox",
+      "samplepacksw_sound_25_ctvox",
+      "samplepacksw_sound_26_ctvox_sing_bounce_4",
+      "samplepacksw_sound_27_ctvox",
+      "samplepacksw_sound_28_ctvox"
+    ]
+  }
+]

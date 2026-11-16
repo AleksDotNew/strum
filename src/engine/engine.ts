@@ -41,7 +41,9 @@ async function create(): Promise<Engine> {
     import('@strudel/core'),
     import('@strudel/mini'),
     import('@strudel/tonal'),
-    import('@strudel/webaudio')
+    import('@strudel/webaudio'),
+    import('@strudel/draw'),
+    import('@strudel/codemirror')
   )
 
   await registerSynthSounds()
@@ -55,6 +57,7 @@ async function create(): Promise<Engine> {
 
   let lastError: unknown = null
   let lastMeta: any = null
+  let lastPattern: any = null
   const r = repl({
     defaultOutput: webaudioOutput,
     getTime: () => getAudioContext().currentTime,
@@ -64,6 +67,11 @@ async function create(): Promise<Engine> {
     },
     afterEval: (options: any) => {
       lastMeta = options?.meta
+      lastPattern = options?.pattern
+      try {
+        const hasPainters = typeof lastPattern?.getPainters === 'function' && lastPattern.getPainters().length > 0
+        drawer.setDrawTime(hasPainters ? [-2, 2] : [0, 0])
+      } catch {}
     },
   })
 

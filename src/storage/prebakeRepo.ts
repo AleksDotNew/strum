@@ -1,7 +1,9 @@
 import { initDb, monotonicNow, type PrebakeScript } from './db'
+import { SWITCH_ANGEL_PREBAKE_ID, SWITCH_ANGEL_PREBAKE_CODE } from './prebakeSwitchAngel'
 
 export const DEFAULT_PREBAKE_ID = 'builtin:default'
 export const WEFT_HELPERS_PREBAKE_ID = 'builtin:weft-helpers'
+export { SWITCH_ANGEL_PREBAKE_ID }
 
 export const DEFAULT_PREBAKE_CODE = `// Default Strudel prebake
 samples('github:tidalcycles/dirt-samples')
@@ -71,6 +73,18 @@ export const prebakeRepo = {
         name: 'Weft Helpers (shiftBy, cycleDegrade, DX, acidenv)',
         source: 'builtin',
         code: WEFT_HELPERS_CODE,
+        trusted: true,
+        updatedAt: now,
+      })
+    }
+
+    const swExisting = await db.get('prebakes', SWITCH_ANGEL_PREBAKE_ID)
+    if (!swExisting) {
+      await db.put('prebakes', {
+        id: SWITCH_ANGEL_PREBAKE_ID,
+        name: 'Switch Angel Suite (synths, orbits, duck, strum)',
+        source: 'builtin',
+        code: SWITCH_ANGEL_PREBAKE_CODE,
         trusted: true,
         updatedAt: now,
       })

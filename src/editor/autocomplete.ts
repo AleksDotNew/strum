@@ -1,9 +1,26 @@
 import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete'
-import { autocompletion } from '@codemirror/autocomplete'
+import {
+  autocompletion,
+  startCompletion,
+  closeCompletion,
+  acceptCompletion,
+  moveCompletionSelection,
+} from '@codemirror/autocomplete'
+import type { KeyBinding } from '@codemirror/view'
 import { cursorContext } from './cursorContext'
 import { getAllFunctions } from '../hints/functionCatalog'
 import { getAllSounds } from '../hints/soundCatalog'
 import { getAllScales, getAllChords } from '../hints/scaleCatalog'
+
+export const strumCompletionKeymap: readonly KeyBinding[] = [
+  { key: 'Ctrl-Space', run: startCompletion },
+  { key: 'Escape', run: closeCompletion },
+  { key: 'ArrowDown', run: moveCompletionSelection(true) },
+  { key: 'ArrowUp', run: moveCompletionSelection(false) },
+  { key: 'PageDown', run: moveCompletionSelection(true, 'page') },
+  { key: 'PageUp', run: moveCompletionSelection(false, 'page') },
+  { key: 'Tab', run: acceptCompletion },
+]
 
 export function strumCompletionSource(context: CompletionContext): CompletionResult | null {
   const doc = context.state.doc.toString()
@@ -111,7 +128,7 @@ export function strumCompletionSource(context: CompletionContext): CompletionRes
 export function strumAutocompleteExtension() {
   return autocompletion({
     override: [strumCompletionSource],
-    defaultKeymap: true,
+    defaultKeymap: false,
     activateOnTypingDelay: 150,
   })
 }

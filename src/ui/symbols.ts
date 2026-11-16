@@ -20,6 +20,7 @@ const MINI_SYMBOLS: SymbolAction[] = [
   { label: '.', insert: '.' },
   { label: '|', insert: '|' },
   { label: '⇥', insert: '  ' },
+  { label: '↵', insert: '\n' },
   { label: '⌫', insert: '\b' },
 ]
 
@@ -39,6 +40,7 @@ const JS_SYMBOLS: SymbolAction[] = [
   { label: '[', insert: '[]', cursorOffset: 1 },
   { label: '"', insert: '""', cursorOffset: 1 },
   { label: '⇥', insert: '  ' },
+  { label: '↵', insert: '\n' },
   { label: '⌫', insert: '\b' },
 ]
 

@@ -12,10 +12,11 @@ describe('samplepackRepo', () => {
 
   it('seeds builtin samplepacks on getAll', async () => {
     const packs = await samplepackRepo.getAll()
-    expect(packs.length).toBeGreaterThanOrEqual(10)
+    expect(packs.length).toBeGreaterThanOrEqual(40)
     expect(packs.some((p) => p.id === 'acid')).toBe(true)
     expect(packs.some((p) => p.id === 'chip')).toBe(true)
     expect(packs.some((p) => p.id === 'breaks')).toBe(true)
+    expect(packs.some((p) => p.filename?.includes('samplepackSwAn'))).toBe(true)
   })
 
   it('imports and toggles custom weftpacks', async () => {
@@ -60,3 +61,4 @@ describe('samplepackRepo', () => {
     expect(deleteBuiltin).toBe(false)
   })
 })
+

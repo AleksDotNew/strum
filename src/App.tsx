@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, onMount, Show } from 'solid-js'
 import './styles/app.css'
+import { insertNewlineAndIndent } from '@codemirror/commands'
 import { TopBar } from './ui/TopBar'
 import { HintLine } from './ui/HintLine'
 import { SymbolBar } from './ui/SymbolBar'
@@ -44,6 +45,18 @@ export default function App() {
   const [projectId, setProjectId] = createSignal('')
   const [projectName, setProjectName] = createSignal('Мой джем')
   const [prebakeIds, setPrebakeIds] = createSignal<string[]>([DEFAULT_PREBAKE_ID])
+  const [theme, setTheme] = createSignal<'default' | 'switch-angel'>(
+    (typeof localStorage !== 'undefined' && (localStorage.getItem('strum:theme') as any)) || 'default'
+  )
+
+  const toggleTheme = () => {
+    const next = theme() === 'default' ? 'switch-angel' : 'default'
+    setTheme(next)
+    try {
+      localStorage.setItem('strum:theme', next)
+    } catch {}
+    setAppHint(next === 'switch-angel' ? 'Тема: Switch Angel (Cyberpunk Neon)' : 'Тема: Strum Classic')
+  }
   const [statusHint, setStatusHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [hint, setHint] = createSignal('Готов к игре. Нажмите ▶ для старта.')
   const [isError, setIsError] = createSignal(false)
@@ -210,6 +223,9 @@ export default function App() {
           if (res.meta?.miniLocations) {
             editorApi?.setMiniLocations(res.meta.miniLocations)
           }
+          if (res.meta?.widgets) {
+            editorApi?.setWidgets(res.meta.widgets)
+          }
           saveSnapshotIfChanged(projectId(), currentCode)
         } else {
           setStatus('error')
@@ -241,6 +257,9 @@ export default function App() {
         editorApi?.markError(null)
         if (res.meta?.miniLocations) {
           editorApi?.setMiniLocations(res.meta.miniLocations)
+        }
+        if (res.meta?.widgets) {
+          editorApi?.setWidgets(res.meta.widgets)
         }
         saveSnapshotIfChanged(projectId(), currentCode)
       } else {
@@ -350,6 +369,10 @@ export default function App() {
           scrollIntoView: true,
         })
       }
+    } else if (act.insert === '\n') {
+      if (!insertNewlineAndIndent(editorApi.view)) {
+        editorApi.insert('\n')
+      }
     } else {
       editorApi.insert(act.insert, act.cursorOffset)
     }
@@ -389,7 +412,7 @@ export default function App() {
   }
 
   return (
-    <main class="app" ref={appRef}>
+    <main class="app" data-theme={theme()} ref={appRef}>
       <TopBar
         playing={playing()}
         bpm={bpm()}
@@ -549,6 +572,14 @@ export default function App() {
                 }}
               >
                 💾 Экспорт в файл (.js)
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  toggleTheme()
+                }}
+              >
+                🎨 Тема: {theme() === 'switch-angel' ? 'Switch Angel (Cyberpunk)' : 'Strum Classic'}
               </button>
               <button
                 class="menu-action-btn"

@@ -354,6 +354,126 @@ html, body, #root {
   }
 }
 
+/* ============================================================
+   SWITCH ANGEL CYBERPUNK THEME
+   ============================================================ */
+[data-theme="switch-angel"] {
+  --bg: #0a0a0a;
+  --fg: #dcdcdc;
+  --accent: #ff4400;
+  --accent-glow: rgba(255, 68, 0, 0.45);
+  --surface: #141414;
+  --surface-alt: #1e1e1e;
+  --border: #2a2a2a;
+  --muted: #707070;
+  background-image:
+    linear-gradient(rgba(255, 68, 0, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 68, 0, 0.025) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+[data-theme="switch-angel"] .topbar {
+  background: #111111;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+[data-theme="switch-angel"] .bottomnav {
+  background: #111111;
+  border-top: 1px solid #2a2a2a;
+}
+
+[data-theme="switch-angel"] .bottomnav-btn.active {
+  color: #ff4400;
+}
+
+[data-theme="switch-angel"] .symbol-bar {
+  background: #141414;
+  border-top: 1px solid #262626;
+}
+
+[data-theme="switch-angel"] .symbol-btn {
+  background: #1c1c1c;
+  color: #e0e0e0;
+  border: 1px solid #2c2c2c;
+}
+
+[data-theme="switch-angel"] .symbol-btn:active {
+  background: #ff4400;
+  color: #000;
+  border-color: #ff4400;
+}
+
+[data-theme="switch-angel"] .hint-line {
+  background: #0f0f0f;
+  color: #ffaa00;
+  border-top: 1px solid #222222;
+}
+
+[data-theme="switch-angel"] .status-pill {
+  background: #1e1512;
+  color: #ff4400;
+  border: 1px solid #ff440066;
+}
+
+/* ============================================================
+   WIDGETS & INLINE SLIDERS (CodeMirror & Prebake UISlider)
+   ============================================================ */
+.cm-slider {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  padding: 0 4px;
+}
+
+.cm-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #2a313d;
+  border-radius: 3px;
+  outline: none;
+  accent-color: var(--accent);
+}
+
+.cm-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+  cursor: pointer;
+}
+
+.cm-widgetBuffer {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.cm-widgetBuffer canvas {
+  display: block;
+  max-width: 100%;
+  border-radius: 4px;
+  margin: 4px 0;
+  background: #12151b;
+  border: 1px solid #232a37;
+}
+
+/* Floating UISlider support for Switch Angel prebakes */
+.bg-lineHighlight {
+  position: fixed !important;
+  bottom: calc(var(--kb, 0px) + 115px) !important;
+  right: 12px !important;
+  z-index: 100 !important;
+  background: rgba(20, 20, 20, 0.92) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+}
+
 
 
 

@@ -18,6 +18,11 @@ describe('prebakeRepo', () => {
 
     const fetched = await prebakeRepo.get(DEFAULT_PREBAKE_ID)
     expect(fetched).toEqual(builtin)
+
+    const sw = await prebakeRepo.get('builtin:switch-angel')
+    expect(sw).toBeDefined()
+    expect(sw?.name).toContain('Switch Angel')
+    expect(sw?.trusted).toBe(true)
   })
 
   it('creates, updates and deletes a custom prebake script', async () => {

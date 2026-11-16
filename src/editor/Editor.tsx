@@ -2,11 +2,19 @@ import { onMount, onCleanup } from 'solid-js'
 import { EditorView } from '@codemirror/view'
 import { EditorState, StateField, StateEffect } from '@codemirror/state'
 import { javascript } from '@codemirror/lang-javascript'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { defaultKeymap, history, historyKeymap, insertNewlineAndIndent } from '@codemirror/commands'
 import { bracketMatching, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { keymap, lineNumbers, highlightActiveLine, Decoration, type DecorationSet } from '@codemirror/view'
-import { highlightExtension, highlightMiniLocations, updateMiniLocations } from '@strudel/codemirror'
-import { strumAutocompleteExtension } from './autocomplete'
+import {
+  highlightExtension,
+  highlightMiniLocations,
+  updateMiniLocations,
+  sliderPlugin,
+  widgetPlugin,
+  updateSliderWidgets,
+  updateWidgets,
+} from '@strudel/codemirror'
+import { strumAutocompleteExtension, strumCompletionKeymap } from './autocomplete'
 
 export const setErrorLine = StateEffect.define<number | null>()
 
@@ -110,6 +118,7 @@ export interface EditorApi {
   cursor(): number
   markError(line: number | null): void
   setMiniLocations(locations: any[]): void
+  setWidgets(widgets: any[]): void
   highlightHaps(time: number, haps: any[]): void
   view: EditorView
 }
@@ -145,9 +154,16 @@ export function Editor(props: EditorProps) {
         javascript(),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         EditorView.lineWrapping,
-        keymap.of([...defaultKeymap, ...historyKeymap]),
+        keymap.of([
+          ...strumCompletionKeymap,
+          { key: 'Enter', run: insertNewlineAndIndent },
+          ...defaultKeymap,
+          ...historyKeymap,
+        ]),
         updateListener,
         highlightExtension,
+        sliderPlugin,
+        widgetPlugin,
         strumAutocompleteExtension(),
         errorLineField,
         darkTheme,
@@ -185,6 +201,17 @@ export function Editor(props: EditorProps) {
         try {
           updateMiniLocations(view, locations || [])
         } catch {}
+      },
+      setWidgets: (widgets: any[]) => {
+        try {
+          const list = widgets || []
+          const sliders = list.filter((w: any) => w.type === 'slider')
+          updateSliderWidgets(view, sliders)
+          const otherWidgets = list.filter((w: any) => w.type !== 'slider')
+          updateWidgets(view, otherWidgets)
+        } catch (err) {
+          console.warn('Failed to update widgets:', err)
+        }
       },
       highlightHaps: (time: number, haps: any[]) => {
         try {
