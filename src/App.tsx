@@ -36,6 +36,8 @@ import { VisualCanvas } from './ui/VisualCanvas'
 import { VisualsSheet } from './ui/VisualsSheet'
 import { VISUAL_PRESETS } from './visuals/visualPresets'
 import { SnippetsSheet } from './ui/SnippetsSheet'
+import { MidiSheet } from './ui/MidiSheet'
+import { midiManager } from './midi/midiManager'
 import { updateForegroundPlayback, onMediaAction } from './engine/foregroundBridge'
 
 export default function App() {
@@ -49,6 +51,7 @@ export default function App() {
   const [showPrebakes, setShowPrebakes] = createSignal(false)
   const [showTemplates, setShowTemplates] = createSignal(false)
   const [showSnippets, setShowSnippets] = createSignal(false)
+  const [showMidiSheet, setShowMidiSheet] = createSignal(false)
   const [showRecordSheet, setShowRecordSheet] = createSignal(false)
   const [showVisualsSheet, setShowVisualsSheet] = createSignal(false)
   const [visualOpacity, setVisualOpacity] = createSignal(0.0)
@@ -676,6 +679,16 @@ export default function App() {
                 class="menu-action-btn"
                 onClick={() => {
                   setShowMenu(false)
+                  setShowMidiSheet(true)
+                  midiManager.init().catch(() => {})
+                }}
+              >
+                🎹 MIDI Studio...
+              </button>
+              <button
+                class="menu-action-btn"
+                onClick={() => {
+                  setShowMenu(false)
                   setShowVisualsSheet(true)
                 }}
               >
@@ -779,6 +792,13 @@ export default function App() {
         selectedCode={editorApi?.getSelection?.() || ''}
         onInsert={handleInsertSnippet}
         onClose={() => setShowSnippets(false)}
+      />
+
+      <MidiSheet
+        open={showMidiSheet()}
+        activeLiteral={activeLiteral()}
+        onApplyLiteralValue={handleSliderValueChange}
+        onClose={() => setShowMidiSheet(false)}
       />
     </main>
   )
