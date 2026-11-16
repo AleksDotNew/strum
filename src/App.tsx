@@ -731,6 +731,9 @@ export default function App() {
               >
                 🔗 Поделиться (strudel.cc)
               </button>
+              <div style={{ 'text-align': 'center', 'font-size': '11px', color: 'var(--muted)', 'margin-top': '8px' }}>
+                Strum v0.2.0-beta
+              </div>
             </div>
           </div>
         </div>
