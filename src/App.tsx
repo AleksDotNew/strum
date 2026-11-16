@@ -372,19 +372,8 @@ export default function App() {
 
   const handleToggleMute = () => {
     if (!editorApi) return
-    const currentCode = editorApi.getCode()
     const pos = editorApi.cursor()
-    const res = toggleBlockMute(currentCode, pos)
-    if (res) {
-      editorApi.setCode(res.newCode)
-      setCode(res.newCode)
-      setAppHint(res.muted ? `Блок ${res.block.name} заглушён (_$)` : `Блок ${res.block.name} включён ($)`)
-      if (playing()) {
-        initEngine()
-          .then((engine) => engine.evaluate(res.newCode))
-          .catch(() => {})
-      }
-    }
+    editorApi.toggleBlockMute({ pos })
   }
 
   const handleSymbolAction = (act: SymbolAction) => {

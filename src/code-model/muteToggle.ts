@@ -17,6 +17,8 @@ export interface ToggleBlockResult {
   block: RootBlock
 }
 
+export type LineOrPos = number | { line?: number; pos?: number }
+
 function getLineAndRawLine(code: string, offset: number): { line: number; rawLine: string } {
   const before = code.slice(0, offset)
   const line = (before.match(/\n/g) || []).length
@@ -127,8 +129,6 @@ export function findRootBlocks(code: string): RootBlock[] {
     }
   }
 
-  // If AST parsing succeeded but found no labeled blocks (could happen if comments/syntax confused AST),
-  // fallback check
   if (blocks.length === 0) {
     const fallback = findRootBlocksFallback(code)
     if (fallback.length > 0) return fallback
@@ -137,62 +137,81 @@ export function findRootBlocks(code: string): RootBlock[] {
   return blocks
 }
 
-export function toggleBlockMute(code: string, lineOrChar: number): ToggleBlockResult | null {
+export function toggleBlockMute(code: string, target: LineOrPos): ToggleBlockResult | null {
   const blocks = findRootBlocks(code)
   if (blocks.length === 0) return null
 
-  // 1. Exact line match
-  let target = blocks.find((b) => b.line === lineOrChar)
+  let targetBlock: RootBlock | undefined
 
-  // 2. Character offset within block span [b.start, nextBlock.start)
-  if (!target) {
-    for (let i = 0; i < blocks.length; i++) {
-      const b = blocks[i]
-      const nextStart = i + 1 < blocks.length ? blocks[i + 1].start : code.length
-      if (lineOrChar >= b.start && lineOrChar < nextStart) {
-        target = b
-        break
+  if (typeof target === 'object') {
+    if (target.line !== undefined) {
+      const reqLine = target.line
+      targetBlock = blocks.find((b) => b.line === reqLine)
+      if (!targetBlock) {
+        for (let i = blocks.length - 1; i >= 0; i--) {
+          if (blocks[i].line <= reqLine) {
+            targetBlock = blocks[i]
+            break
+          }
+        }
+      }
+    } else if (target.pos !== undefined) {
+      const pos = Math.max(0, Math.min(target.pos, code.length))
+      const { line: charLine } = getLineAndRawLine(code, pos)
+      for (let i = blocks.length - 1; i >= 0; i--) {
+        if (blocks[i].line <= charLine) {
+          targetBlock = blocks[i]
+          break
+        }
+      }
+    }
+  } else {
+    const totalLines = code.split('\n').length
+    if (target >= totalLines) {
+      const { line: charLine } = getLineAndRawLine(code, target)
+      for (let i = blocks.length - 1; i >= 0; i--) {
+        if (blocks[i].line <= charLine) {
+          targetBlock = blocks[i]
+          break
+        }
+      }
+    } else {
+      targetBlock = blocks.find((b) => b.line === target)
+      if (!targetBlock) {
+        for (let i = blocks.length - 1; i >= 0; i--) {
+          if (blocks[i].line <= target) {
+            targetBlock = blocks[i]
+            break
+          }
+        }
       }
     }
   }
 
-  // 3. Line index enclosed by a block
-  if (!target) {
-    for (let i = blocks.length - 1; i >= 0; i--) {
-      if (blocks[i].line <= lineOrChar) {
-        target = blocks[i]
-        break
-      }
-    }
+  if (!targetBlock) {
+    targetBlock = blocks[0]
   }
 
-  // 4. Fallback to nearest block
-  if (!target) {
-    target = blocks[0]
-  }
-
-  const newMuted = !target.muted
+  const newMuted = !targetBlock.muted
   let newCode: string
-  const newStart = target.start
+  const newStart = targetBlock.start
   let newEnd: number
   let newPrefix: string
 
-  if (target.muted) {
-    // Unmute: remove leading '_' from prefix at target.start
-    newCode = code.slice(0, target.start) + code.slice(target.start + 1)
-    newEnd = target.end - 1
-    newPrefix = target.prefix.replace(/^_/, '')
+  if (targetBlock.muted) {
+    newCode = code.slice(0, targetBlock.start) + code.slice(targetBlock.start + 1)
+    newEnd = targetBlock.end - 1
+    newPrefix = targetBlock.prefix.replace(/^_/, '')
   } else {
-    // Mute: insert '_' at target.start
-    newCode = code.slice(0, target.start) + '_' + code.slice(target.start)
-    newEnd = target.end + 1
-    newPrefix = '_' + target.prefix
+    newCode = code.slice(0, targetBlock.start) + '_' + code.slice(targetBlock.start)
+    newEnd = targetBlock.end + 1
+    newPrefix = '_' + targetBlock.prefix
   }
 
-  const { rawLine } = getLineAndRawLine(newCode, target.start)
+  const { rawLine } = getLineAndRawLine(newCode, targetBlock.start)
 
   const updatedBlock: RootBlock = {
-    ...target,
+    ...targetBlock,
     muted: newMuted,
     prefix: newPrefix,
     end: newEnd,
@@ -211,7 +230,6 @@ export function toggleAllBlocks(code: string, mute: boolean): string {
   const blocks = findRootBlocks(code)
   if (blocks.length === 0) return code
 
-  // Process in reverse order of start offset so earlier offsets remain valid
   const toModify = blocks.filter((b) => (mute ? !b.muted : b.muted))
   toModify.sort((a, b) => b.start - a.start)
 

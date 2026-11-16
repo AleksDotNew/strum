@@ -23,7 +23,7 @@ import {
   updateWidgets,
 } from '@strudel/codemirror'
 import { strumAutocompleteExtension, strumCompletionKeymap } from './autocomplete'
-import { findRootBlocks, toggleBlockMute, type RootBlock } from '../code-model/muteToggle'
+import { findRootBlocks, toggleBlockMute, type RootBlock, type LineOrPos } from '../code-model/muteToggle'
 
 export const setErrorLine = StateEffect.define<number | null>()
 
@@ -52,6 +52,18 @@ class MuteMarker extends GutterMarker {
   }
 }
 
+let cachedDoc: any = null
+let cachedBlocksByLine = new Map<number, RootBlock>()
+
+function getCachedRootBlockForLine(doc: any, lineIndex: number): RootBlock | undefined {
+  if (doc !== cachedDoc) {
+    cachedDoc = doc
+    const blocks = findRootBlocks(doc.toString())
+    cachedBlocksByLine = new Map(blocks.map((b) => [b.line, b]))
+  }
+  return cachedBlocksByLine.get(lineIndex)
+}
+
 export function muteGutterExtension(
   onToggle?: (newCode: string, muted: boolean, block: RootBlock) => void
 ) {
@@ -60,8 +72,7 @@ export function muteGutterExtension(
     lineMarker(view, line) {
       const lineObj = view.state.doc.lineAt(line.from)
       const lineIndex = lineObj.number - 1
-      const blocks = findRootBlocks(view.state.doc.toString())
-      const block = blocks.find((b) => b.line === lineIndex)
+      const block = getCachedRootBlockForLine(view.state.doc, lineIndex)
       if (block) {
         return new MuteMarker(block.muted, block.name)
       }
@@ -72,28 +83,52 @@ export function muteGutterExtension(
     },
     domEventHandlers: {
       mousedown(view, line, event) {
+        const isMarker = (event.target as HTMLElement)?.closest('.cm-mute-marker')
+        if (!isMarker) return false
+
         event.preventDefault()
         const lineObj = view.state.doc.lineAt(line.from)
         const lineIndex = lineObj.number - 1
-        const res = toggleBlockMute(view.state.doc.toString(), lineIndex)
+        const block = getCachedRootBlockForLine(view.state.doc, lineIndex)
+        if (!block) return false
+
+        const res = toggleBlockMute(view.state.doc.toString(), { line: lineIndex })
         if (res) {
-          view.dispatch({
-            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
-          })
+          if (block.muted) {
+            view.dispatch({
+              changes: { from: block.start, to: block.start + 1, insert: '' },
+            })
+          } else {
+            view.dispatch({
+              changes: { from: block.start, to: block.start, insert: '_' },
+            })
+          }
           onToggle?.(res.newCode, res.muted, res.block)
           return true
         }
         return false
       },
       touchstart(view, line, event) {
+        const isMarker = (event.target as HTMLElement)?.closest('.cm-mute-marker')
+        if (!isMarker) return false
+
         event.preventDefault()
         const lineObj = view.state.doc.lineAt(line.from)
         const lineIndex = lineObj.number - 1
-        const res = toggleBlockMute(view.state.doc.toString(), lineIndex)
+        const block = getCachedRootBlockForLine(view.state.doc, lineIndex)
+        if (!block) return false
+
+        const res = toggleBlockMute(view.state.doc.toString(), { line: lineIndex })
         if (res) {
-          view.dispatch({
-            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
-          })
+          if (block.muted) {
+            view.dispatch({
+              changes: { from: block.start, to: block.start + 1, insert: '' },
+            })
+          } else {
+            view.dispatch({
+              changes: { from: block.start, to: block.start, insert: '_' },
+            })
+          }
           onToggle?.(res.newCode, res.muted, res.block)
           return true
         }
@@ -236,7 +271,7 @@ export interface EditorApi {
   setMiniLocations(locations: any[]): void
   setWidgets(widgets: any[]): void
   highlightHaps(time: number, haps: any[]): void
-  toggleBlockMute(lineOrChar?: number): boolean
+  toggleBlockMute(target?: LineOrPos): boolean
   view: EditorView
 }
 
@@ -337,13 +372,20 @@ export function Editor(props: EditorProps) {
           highlightMiniLocations(view, time, haps)
         } catch {}
       },
-      toggleBlockMute: (lineOrChar?: number) => {
-        const target = lineOrChar ?? view.state.selection.main.head
-        const res = toggleBlockMute(view.state.doc.toString(), target)
+      toggleBlockMute: (target?: LineOrPos) => {
+        const lineOrPos = target ?? { pos: view.state.selection.main.head }
+        const res = toggleBlockMute(view.state.doc.toString(), lineOrPos)
         if (res) {
-          view.dispatch({
-            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
-          })
+          const wasMuted = !res.muted
+          if (wasMuted) {
+            view.dispatch({
+              changes: { from: res.block.start, to: res.block.start + 1, insert: '' },
+            })
+          } else {
+            view.dispatch({
+              changes: { from: res.block.start, to: res.block.start, insert: '_' },
+            })
+          }
           props.onToggleMute?.(res.newCode, res.muted, res.block)
           return true
         }

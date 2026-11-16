@@ -24,7 +24,6 @@ export function SymbolBar(props: SymbolBarProps) {
           style={{
             'font-weight': '700',
             color: '#ff6b6b',
-            'min-width': '38px',
           }}
           title="Toggle block mute (_$)"
           onPointerDown={(e) => {

@@ -129,6 +129,38 @@ $: s("active")
       const res = toggleBlockMute(code, 0)
       expect(res).toBeNull()
     })
+
+    it('correctly handles cursor offset at small positions (0, 1, 2) on line 0 in multi-block document', () => {
+      const code = `$: s("bd")\n_$: s("hh")\nd1: s("arpy")`
+      // Cursor pos 0 (before '$' on line 0)
+      const res0 = toggleBlockMute(code, { pos: 0 })
+      expect(res0?.block.name).toBe('$')
+      expect(res0?.block.line).toBe(0)
+      expect(res0?.muted).toBe(true)
+      expect(res0?.newCode).toBe(`_$: s("bd")\n_$: s("hh")\nd1: s("arpy")`)
+
+      // Cursor pos 1 (between '$' and ':' on line 0)
+      const res1 = toggleBlockMute(code, { pos: 1 })
+      expect(res1?.block.name).toBe('$')
+      expect(res1?.block.line).toBe(0)
+      expect(res1?.muted).toBe(true)
+
+      // Cursor pos 2 (after ':' on line 0) - MUST NOT match line 2!
+      const res2 = toggleBlockMute(code, { pos: 2 })
+      expect(res2?.block.name).toBe('$')
+      expect(res2?.block.line).toBe(0)
+      expect(res2?.muted).toBe(true)
+      expect(res2?.newCode).toBe(`_$: s("bd")\n_$: s("hh")\nd1: s("arpy")`)
+    })
+
+    it('correctly targets explicit line index via { line: N }', () => {
+      const code = `$: s("bd")\n_$: s("hh")\nd1: s("arpy")`
+      const resLine2 = toggleBlockMute(code, { line: 2 })
+      expect(resLine2?.block.name).toBe('d1')
+      expect(resLine2?.block.line).toBe(2)
+      expect(resLine2?.muted).toBe(true)
+      expect(resLine2?.newCode).toBe(`$: s("bd")\n_$: s("hh")\n_d1: s("arpy")`)
+    })
   })
 
   describe('toggleAllBlocks', () => {
