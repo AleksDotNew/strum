@@ -4,7 +4,15 @@ import { EditorState, StateField, StateEffect } from '@codemirror/state'
 import { javascript } from '@codemirror/lang-javascript'
 import { defaultKeymap, history, historyKeymap, insertNewlineAndIndent } from '@codemirror/commands'
 import { bracketMatching, syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
-import { keymap, lineNumbers, highlightActiveLine, Decoration, type DecorationSet } from '@codemirror/view'
+import {
+  keymap,
+  lineNumbers,
+  highlightActiveLine,
+  Decoration,
+  type DecorationSet,
+  gutter,
+  GutterMarker,
+} from '@codemirror/view'
 import {
   highlightExtension,
   highlightMiniLocations,
@@ -15,8 +23,88 @@ import {
   updateWidgets,
 } from '@strudel/codemirror'
 import { strumAutocompleteExtension, strumCompletionKeymap } from './autocomplete'
+import { findRootBlocks, toggleBlockMute, type RootBlock } from '../code-model/muteToggle'
 
 export const setErrorLine = StateEffect.define<number | null>()
+
+class MuteMarker extends GutterMarker {
+  constructor(public readonly muted: boolean, public readonly blockName: string) {
+    super()
+  }
+
+  eq(other: GutterMarker): boolean {
+    return (
+      other instanceof MuteMarker &&
+      other.muted === this.muted &&
+      other.blockName === this.blockName
+    )
+  }
+
+  toDOM(): Node {
+    const btn = document.createElement('span')
+    btn.className = `cm-mute-marker ${this.muted ? 'cm-mute-marker-muted' : 'cm-mute-marker-active'}`
+    btn.textContent = this.muted ? '[M]' : '[S]'
+    btn.setAttribute('data-muted', String(this.muted))
+    btn.setAttribute('data-block', this.blockName)
+    btn.setAttribute('role', 'button')
+    btn.setAttribute('aria-label', this.muted ? `Unmute ${this.blockName}` : `Mute ${this.blockName}`)
+    return btn
+  }
+}
+
+export function muteGutterExtension(
+  onToggle?: (newCode: string, muted: boolean, block: RootBlock) => void
+) {
+  return gutter({
+    class: 'cm-mute-gutter',
+    lineMarker(view, line) {
+      const lineObj = view.state.doc.lineAt(line.from)
+      const lineIndex = lineObj.number - 1
+      const blocks = findRootBlocks(view.state.doc.toString())
+      const block = blocks.find((b) => b.line === lineIndex)
+      if (block) {
+        return new MuteMarker(block.muted, block.name)
+      }
+      return null
+    },
+    lineMarkerChange(update) {
+      return update.docChanged
+    },
+    domEventHandlers: {
+      mousedown(view, line, event) {
+        event.preventDefault()
+        const lineObj = view.state.doc.lineAt(line.from)
+        const lineIndex = lineObj.number - 1
+        const res = toggleBlockMute(view.state.doc.toString(), lineIndex)
+        if (res) {
+          view.dispatch({
+            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
+          })
+          onToggle?.(res.newCode, res.muted, res.block)
+          return true
+        }
+        return false
+      },
+      touchstart(view, line, event) {
+        event.preventDefault()
+        const lineObj = view.state.doc.lineAt(line.from)
+        const lineIndex = lineObj.number - 1
+        const res = toggleBlockMute(view.state.doc.toString(), lineIndex)
+        if (res) {
+          view.dispatch({
+            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
+          })
+          onToggle?.(res.newCode, res.muted, res.block)
+          return true
+        }
+        return false
+      },
+    },
+    initialSpacer() {
+      return new MuteMarker(false, '$')
+    },
+  })
+}
 
 const errorLineField = StateField.define<DecorationSet>({
   create() {
@@ -77,6 +165,34 @@ const darkTheme = EditorView.theme(
       backgroundColor: 'rgba(255, 107, 107, 0.25)',
       borderLeft: '3px solid #ff6b6b',
     },
+    '.cm-mute-gutter': {
+      width: '26px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    '.cm-mute-marker': {
+      cursor: 'pointer',
+      userSelect: 'none',
+      fontSize: '11px',
+      lineHeight: '1.2',
+      padding: '1px 3px',
+      borderRadius: '3px',
+      fontFamily: 'monospace',
+      fontWeight: 'bold',
+      display: 'inline-block',
+      textAlign: 'center',
+    },
+    '.cm-mute-marker-muted': {
+      color: '#ff6b6b',
+      backgroundColor: 'rgba(255, 107, 107, 0.2)',
+      border: '1px solid rgba(255, 107, 107, 0.4)',
+    },
+    '.cm-mute-marker-active': {
+      color: '#7cf0b0',
+      backgroundColor: 'rgba(124, 240, 176, 0.15)',
+      border: '1px solid rgba(124, 240, 176, 0.3)',
+    },
     '.cm-tooltip': {
       backgroundColor: '#191d24',
       border: '1px solid #2a313d',
@@ -120,6 +236,7 @@ export interface EditorApi {
   setMiniLocations(locations: any[]): void
   setWidgets(widgets: any[]): void
   highlightHaps(time: number, haps: any[]): void
+  toggleBlockMute(lineOrChar?: number): boolean
   view: EditorView
 }
 
@@ -128,6 +245,7 @@ export interface EditorProps {
   onReady?(api: EditorApi): void
   onChange?(code: string): void
   onCursorMove?(pos: number): void
+  onToggleMute?(newCode: string, muted: boolean, block: RootBlock): void
 }
 
 export function Editor(props: EditorProps) {
@@ -148,6 +266,7 @@ export function Editor(props: EditorProps) {
       doc: props.initialCode,
       extensions: [
         lineNumbers(),
+        muteGutterExtension(props.onToggleMute),
         highlightActiveLine(),
         history(),
         bracketMatching(),
@@ -217,6 +336,18 @@ export function Editor(props: EditorProps) {
         try {
           highlightMiniLocations(view, time, haps)
         } catch {}
+      },
+      toggleBlockMute: (lineOrChar?: number) => {
+        const target = lineOrChar ?? view.state.selection.main.head
+        const res = toggleBlockMute(view.state.doc.toString(), target)
+        if (res) {
+          view.dispatch({
+            changes: { from: 0, to: view.state.doc.length, insert: res.newCode },
+          })
+          props.onToggleMute?.(res.newCode, res.muted, res.block)
+          return true
+        }
+        return false
       },
       view,
     }

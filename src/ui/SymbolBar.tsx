@@ -8,6 +8,7 @@ export interface SymbolBarProps {
   activeLiteral?: CodeLiteral | null
   onAction(action: SymbolAction): void
   onOpenSlider?(): void
+  onToggleMute?(): void
 }
 
 export function SymbolBar(props: SymbolBarProps) {
@@ -16,6 +17,27 @@ export function SymbolBar(props: SymbolBarProps) {
   return (
     <div class="symbol-bar" data-testid="symbol-bar">
       <div class="symbol-row">
+        <button
+          class="symbol-btn symbol-btn-mute"
+          data-symbol="_$"
+          data-testid="symbol-mute-btn"
+          style={{
+            'font-weight': '700',
+            color: '#ff6b6b',
+            'min-width': '38px',
+          }}
+          title="Toggle block mute (_$)"
+          onPointerDown={(e) => {
+            e.preventDefault()
+            if (props.onToggleMute) {
+              props.onToggleMute()
+            } else {
+              props.onAction({ label: '_$', insert: '_$' })
+            }
+          }}
+        >
+          _$
+        </button>
         <Show when={props.activeLiteral?.type === 'number'}>
           <button
             class="symbol-btn symbol-btn-slider"

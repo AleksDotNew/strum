@@ -25,6 +25,7 @@ import { PrebakeSheet } from './ui/PrebakeSheet'
 import { TemplatesSheet } from './ui/TemplatesSheet'
 import { resolveCursorHint } from './hints/tokenInspector'
 import { literalAt, replaceLiteral, type CodeLiteral } from './code-model/acorn'
+import { toggleBlockMute } from './code-model/muteToggle'
 import { NumberSliderSheet } from './ui/NumberSliderSheet'
 import { StepGrid } from './ui/StepGrid'
 import { SoundBrowser } from './ui/SoundBrowser'
@@ -369,8 +370,29 @@ export default function App() {
     }
   }
 
+  const handleToggleMute = () => {
+    if (!editorApi) return
+    const currentCode = editorApi.getCode()
+    const pos = editorApi.cursor()
+    const res = toggleBlockMute(currentCode, pos)
+    if (res) {
+      editorApi.setCode(res.newCode)
+      setCode(res.newCode)
+      setAppHint(res.muted ? `Блок ${res.block.name} заглушён (_$)` : `Блок ${res.block.name} включён ($)`)
+      if (playing()) {
+        initEngine()
+          .then((engine) => engine.evaluate(res.newCode))
+          .catch(() => {})
+      }
+    }
+  }
+
   const handleSymbolAction = (act: SymbolAction) => {
     if (!editorApi) return
+    if (act.label === '_$' || act.insert === '_$') {
+      handleToggleMute()
+      return
+    }
     if (act.insert === '\b') {
       const pos = editorApi.cursor()
       if (pos > 0) {
@@ -468,6 +490,15 @@ export default function App() {
               setCode(newCode)
               if (editorApi) updateCursor(editorApi.cursor())
             }}
+            onToggleMute={(newCode, muted, block) => {
+              setCode(newCode)
+              setAppHint(muted ? `Блок ${block.name} заглушён (_$)` : `Блок ${block.name} включён ($)`)
+              if (playing()) {
+                initEngine()
+                  .then((engine) => engine.evaluate(newCode))
+                  .catch(() => {})
+              }
+            }}
             onCursorMove={updateCursor}
           />
         )}
@@ -514,6 +545,7 @@ export default function App() {
         context={cursorCtx()}
         activeLiteral={activeLiteral()}
         onOpenSlider={() => setShowNumberSlider(true)}
+        onToggleMute={handleToggleMute}
         onAction={handleSymbolAction}
       />
       <BottomNav currentTab={currentTab()} onSelectTab={setCurrentTab} />
